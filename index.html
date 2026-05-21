@@ -3,26 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PWA 精密日時アラーム</title>
+    <title>PWA フルカスタムアラーム</title>
     <link rel="manifest" href="manifest.json">
     <style>
         :root {
-            --primary-color: #e63946;
-            --bg-color: #f8f9fa;
+            --primary-color: #4c1d95;
+            --bg-color: #f8fafc;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; text-align: center; background: var(--bg-color); margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 480px; margin: 0 auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        .clock { font-size: 2.8rem; font-weight: bold; font-variant-numeric: tabular-nums; margin-bottom: 25px; color: #1d3557; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; text-align: center; background: var(--bg-color); margin: 0; padding: 20px; color: #334155; }
+        .container { max-width: 480px; margin: 0 auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .clock { font-size: 3rem; font-weight: bold; font-variant-numeric: tabular-nums; margin-bottom: 25px; color: var(--primary-color); }
         
-        /* アラームリスト */
-        .alarm-item { background: #f1faee; padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); }
-        .alarm-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: bold; color: #457b9d; }
+        /* アラームアイテム */
+        .alarm-item { background: #f1f5f9; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: left; }
+        .alarm-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: bold; }
         
-        /* 入力エリアのレイアウト */
-        .input-group { display: flex; gap: 8px; justify-content: center; align-items: center; }
-        input[type="date"], input[type="time"], .sec-input { font-size: 1rem; padding: 8px; border: 1px solid #ccc; border-radius: 6px; background: white; }
+        /* 入力エリア */
+        .input-group { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; flex-wrap: wrap; }
+        input[type="date"], input[type="time"], .sec-input { font-size: 1rem; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; background: white; }
         .sec-input { width: 50px; text-align: center; }
         
+        /* オーディオファイル選択 */
+        .file-input-label { font-size: 0.85rem; display: block; margin-top: 5px; color: #64748b; }
+        .file-name { font-size: 0.85rem; color: #0284c7; font-weight: bold; margin-left: 5px; }
+
         /* トグルスイッチ */
         .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -35,25 +39,30 @@
 <body>
 
 <div class="container">
-    <!-- 現在の「年月日 時分秒」を表示 -->
     <div class="clock" id="clock">0000/00/00 00:00:00</div>
-
-    <!-- アラーム5個の入力欄 -->
     <div id="alarm-list"></div>
 </div>
 
 <script>
-    // 5つのアラームの状態（日付、時間、秒、有効フラグ）
+    // 5つのアラームの状態（audioDataにファイルのBase64データを保存する）
     let alarms = [
-        { date: "", time: "", sec: "00", active: false },
-        { date: "", time: "", sec: "00", active: false },
-        { date: "", time: "", sec: "00", active: false },
-        { date: "", time: "", sec: "00", active: false },
-        { date: "", time: "", sec: "00", active: false }
+        { date: "", time: "", sec: "00", active: false, audioData: null, audioName: "未設定" },
+        { date: "", time: "", sec: "00", active: false, audioData: null, audioName: "未設定" },
+        { date: "", time: "", sec: "00", active: false, audioData: null, audioName: "未設定" },
+        { date: "", time: "", sec: "00", active: false, audioData: null, audioName: "未設定" },
+        { date: "", time: "", sec: "00", active: false, audioData: null, audioName: "未設定" }
     ];
 
-    // 画面に入力項目を生成
+    // 保存されたデータを読み込む
+    if (localStorage.getItem('pwa_alarms')) {
+        const saved = JSON.parse(localStorage.getItem('pwa_alarms'));
+        // データの互換性を保ちつつ復元
+        alarms = alarms.map((alarm, i) => saved[i] ? { ...alarm, ...saved[i], active: false } : alarm);
+    }
+
     const alarmListContainer = document.getElementById('alarm-list');
+    
+    // 画面の生成
     alarms.forEach((alarm, index) => {
         const item = document.createElement('div');
         item.className = 'alarm-item';
@@ -61,22 +70,28 @@
             <div class="alarm-header">
                 <span>⏰ アラーム ${index + 1}</span>
                 <label class="switch">
-                    <input type="checkbox" id="toggle-${index}" onchange="toggleAlarm(${index}, this.checked)">
+                    <input type="checkbox" id="toggle-${index}" ${alarm.active ? 'checked' : ''} onchange="toggleAlarm(${index}, this.checked)">
                     <span class="slider"></span>
                 </label>
             </div>
             <div class="input-group">
-                <input type="date" id="date-${index}" onchange="updateAlarm(${index}, 'date', this.value)">
-                <input type="time" id="time-${index}" onchange="updateAlarm(${index}, 'time', this.value)">
-                <input type="number" id="sec-${index}" class="sec-input" min="0" max="59" value="00" placeholder="秒" onchange="updateAlarm(${index}, 'sec', this.value)">
+                <input type="date" id="date-${index}" value="${alarm.date}" onchange="updateAlarm(${index}, 'date', this.value)">
+                <input type="time" id="time-${index}" value="${alarm.time}" onchange="updateAlarm(${index}, 'time', this.value)">
+                <input type="number" id="sec-${index}" class="sec-input" min="0" max="59" value="${alarm.sec}" onchange="updateAlarm(${index}, 'sec', this.value)">
                 <span>秒</span>
+            </div>
+            <div>
+                <label class="file-input-label">
+                    🎵 音源: 
+                    <input type="file" accept="audio/*" onchange="handleFileSelect(${index}, this)">
+                    <span id="filename-${index}" class="file-name">${alarm.audioName}</span>
+                </label>
             </div>
         `;
         alarmListContainer.appendChild(item);
     });
 
-    // 入力値を配列に反映する関数
-    // 「秒」が空欄か不正な値なら自動で "00" に補完します
+    // 入力値の更新と保存
     function updateAlarm(index, key, value) {
         if (key === 'sec') {
             let s = parseInt(value, 10);
@@ -85,23 +100,47 @@
             document.getElementById(`sec-${index}`).value = value;
         }
         alarms[index][key] = value;
+        saveToStorage();
     }
 
-    // スイッチの切り替え処理
+    // 💡 音楽ファイルが選ばれたときの処理（データをブラウザに記憶できる形式に変換する）
+    function handleFileSelect(index, input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        alarms[index].audioName = file.name;
+        document.getElementById(`filename-${index}`).innerText = file.name;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            alarms[index].audioData = e.target.result; // Base64形式の音楽データ
+            saveToStorage();
+        };
+        reader.readAsDataURL(file);
+    }
+
     function toggleAlarm(index, isChecked) {
         alarms[index].active = isChecked;
         if (isChecked && !alarms[index].time) {
-            alert("「時間（時:分）」は必ず設定してください。");
+            alert("「時間」は必ず設定してください。");
             document.getElementById(`toggle-${index}`).checked = false;
             alarms[index].active = false;
         }
+        saveToStorage();
     }
 
-    // メインのタイマーループ（1秒ごとに実行）
+    function saveToStorage() {
+        // 容量制限を考慮し、audioDataを含めてローカルストレージに保存
+        try {
+            localStorage.setItem('pwa_alarms', JSON.stringify(alarms));
+        } catch (e) {
+            alert("音楽ファイルのサイズが大きすぎるため、アプリを閉じると曲の設定が消える可能性があります（2MB以下のmp3を推奨します）。");
+        }
+    }
+
+    // メインループ
     setInterval(() => {
         const now = new Date();
-        
-        // 現在時刻のパーツを個別に取得（1桁の時は0埋め）
         const yyyy = now.getFullYear();
         const mm = String(now.getMonth() + 1).padStart(2, '0');
         const dd = String(now.getDate()).padStart(2, '0');
@@ -109,46 +148,53 @@
         const min = String(now.getMinutes()).padStart(2, '0');
         const ss = String(now.getSeconds()).padStart(2, '0');
 
-        // 時計表示の更新
         document.getElementById('clock').innerText = `${yyyy}/${mm}/${dd} ${hh}:${min}:${ss}`;
 
-        // 5つのアラームをチェック
         alarms.forEach((alarm, index) => {
-            if (!alarm.active) return; // オフならスキップ
+            if (!alarm.active) return;
 
-            // 1. 日付の判定（空欄なら「今日の年月日」にする）
             let targetDate = alarm.date; 
             if (!targetDate) {
-                targetDate = `${yyyy}-${mm}-${dd}`; // フォームの「YYYY-MM-DD」形式に合わせる
+                const [alarmH, alarmM] = alarm.time.split(':');
+                const todayAlarmInstance = new Date(yyyy, now.getMonth(), now.getDate(), alarmH, alarmM, alarm.sec);
+
+                if (todayAlarmInstance < now) {
+                    todayAlarmInstance.setDate(todayAlarmInstance.getDate() + 1);
+                }
+
+                const tYear = todayAlarmInstance.getFullYear();
+                const tMonth = String(todayAlarmInstance.getMonth() + 1).padStart(2, '0');
+                const tDate = String(todayAlarmInstance.getDate()).padStart(2, '0');
+                targetDate = `${tYear}-${tMonth}-${tDate}`;
             }
 
-            // 2. 時間のパース（"14:35" などを "14" と "35" に分解）
             const [alarmH, alarmM] = alarm.time.split(':');
-
-            // 3. 現在時刻と、設定（または補完された）日時が「秒」まで完全一致するか判定
-            const currentAlarmDate = `${yyyy}-${mm}-${dd}`;
+            const currentDateStr = `${yyyy}-${mm}-${dd}`;
             
-            if (
-                targetDate === currentAlarmDate && 
-                hh === alarmH && 
-                min === alarmM && 
-                ss === alarm.sec
-            ) {
-                // 条件が一致したらアラーム発動！
-                alert(`⏰ アラーム ${index + 1} の時間です！\n設定: ${targetDate} ${alarm.time}:${alarm.sec}`);
+            if (targetDate === currentDateStr && hh === alarmH && min === alarmM && ss === alarm.sec) {
                 
-                // 鳴り終わったら自動でスイッチをオフにする
+                // 💡 【新機能】音楽を鳴らす処理
+                if (alarm.audioData) {
+                    const audio = new Audio(alarm.audioData);
+                    audio.play().catch(err => {
+                        console.error("再生に失敗しました（ブラウザのセキュリティ制限）: ", err);
+                        alert(`⏰ アラーム ${index + 1} の時間です！\n(※ブラウザの制限により音がブロックされました)`);
+                    });
+                } else {
+                    // 音楽ファイルが未設定なら従来通りアラートを出す
+                    alert(`⏰ アラーム ${index + 1} の時間です！(音源未設定)`);
+                }
+                
                 document.getElementById(`toggle-${index}`).checked = false;
                 alarm.active = false;
+                saveToStorage();
             }
         });
     }, 1000);
 
-    // ─── PWA用 サービスワーカー登録 ───
+    // サービスワーカー登録
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
-            .then(() => console.log('Service Worker 登録完了'))
-            .catch(err => console.error('Service Worker 登録失敗', err));
+        navigator.serviceWorker.register('sw.js').catch(err => console.error(err));
     }
 </script>
 </body>
