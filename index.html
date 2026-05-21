@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWAアラーム</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background: #f0f0f0; }
+        .clock { font-size: 3rem; margin-bottom: 20px; }
+        input, button { font-size: 1.2rem; padding: 10px; margin: 10px; border-radius: 5px; border: 1px solid #ccc; }
+        button { background: #007bff; color: white; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="clock" id="clock">00:00:00</div>
+    <input type="time" id="alarmTime">
+    <button onclick="setAlarm()">アラームを設定</button>
+    <p id="status"></p>
+
+    <script>
+        let alarmTime = null;
+
+        // 時計の更新
+        setInterval(() => {
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0];
+            document.getElementById('clock').innerText = timeStr;
+
+            // アラーム判定
+            if (alarmTime && timeStr.startsWith(alarmTime)) {
+                alert("⏰ 時間ですよ！");
+                alarmTime = null; // リセット
+                document.getElementById('status').innerText = "";
+            }
+        }, 1000);
+
+        function setAlarm() {
+            alarmTime = document.getElementById('alarmTime').value;
+            if(alarmTime) {
+                document.getElementById('status').innerText = `${alarmTime} にアラームを設定しました`;
+            }
+        }
+
+        // ─── PWA用のサービスワーカー登録 ───
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('Service Worker 登録完了'))
+                .catch(err => console.error('Service Worker 登録失敗', err));
+        }
+    </script>
+</body>
+</html>
