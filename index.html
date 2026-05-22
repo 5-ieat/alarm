@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PWA フルカスタムアラーム</title>
+    <title>PWA フルカスタムアラーム（IndexedDB大容量版）</title>
     <link rel="manifest" href="manifest.json">
     <style>
         :root {
@@ -23,7 +23,7 @@
         input[type="date"], input[type="time"], .sec-input { font-size: 1rem; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; background: white; }
         .sec-input { width: 50px; text-align: center; }
         
-        /* オーディオファイル選択 */
+        /* ファイル選択 */
         .file-input-label { font-size: 0.85rem; display: block; margin-top: 5px; color: #64748b; }
         .file-name { font-size: 0.85rem; color: #0284c7; font-weight: bold; margin-left: 5px; }
 
@@ -34,6 +34,12 @@
         .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--primary-color); }
         input:checked + .slider:before { transform: translateX(22px); }
+
+        /* 停止ボタン */
+        .stop-btn { display: none; width: 100%; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; margin-top: 15px; cursor: pointer; }
+        
+        /* ビデオ要素（動画アラーム用、非表示にして音だけ鳴らすことも可能） */
+        video { display: none; width: 100%; max-height: 240px; margin-top: 15px; border-radius: 8px; background: black; }
     </style>
 </head>
 <body>
@@ -41,28 +47,81 @@
 <div class="container">
     <div class="clock" id="clock">0000/00/00 00:00:00</div>
     <div id="alarm-list"></div>
+    
+    <video id="alarm-video" controls></video>
+    <button id="stop-alarm-btn" class="stop-btn" onclick="stopCurrentMedia()">🚨 アラームを停止</button>
 </div>
 
 <script>
-    // 5つのアラームの状態（audioDataにファイルのBase64データを保存する）
+    // 時間や設定など、軽いデータのみLocalStorageで管理する
     let alarms = [
-        { date: "", time: "", sec: "00", active: false, audioData: null, audioName: "未設定" },
-        { date: "", time: "", sec: "00", active: false, audioData: null, audioName: "未設定" },
-        { date: "", time: "", sec: "00", active: false, audioData: null, audioName: "未設定" },
-        { date: "", time: "", sec: "00", active: false, audioData: null, audioName: "未設定" },
-        { date: "", time: "", sec: "00", active: false, audioData: null, audioName: "未設定" }
+        { date: "", time: "", sec: "00", active: false, audioName: "未設定" },
+        { date: "", time: "", sec: "00", active: false, audioName: "未設定" },
+        { date: "", time: "", sec: "00", active: false, audioName: "未設定" },
+        { date: "", time: "", sec: "00", active: false, audioName: "未設定" },
+        { date: "", time: "", sec: "00", active: false, audioName: "未設定" }
     ];
 
-    // 保存されたデータを読み込む
+    let currentAudio = null; 
+    let currentVideo = document.getElementById('alarm-video');
+
+    // --- 💡 [新機能] IndexedDBの初期化と操作関数 ---
+    const DB_NAME = "AlarmMediaDB";
+    const STORE_NAME = "mediaFiles";
+
+    function openDB() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(DB_NAME, 1);
+            request.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    db.createObjectStore(STORE_NAME);
+                }
+            };
+            request.onsuccess = (e) => resolve(e.target.result);
+            request.onerror = (e) => reject(e.target.error);
+        });
+    }
+
+    // ファイルを無変換（Blob）のまま大容量保存
+    async function saveMediaToDB(index, file) {
+        try {
+            const db = await openDB();
+            const transaction = db.transaction(STORE_NAME, "readwrite");
+            const store = transaction.objectStore(STORE_NAME);
+            store.put(file, `media_${index}`);
+        } catch (err) {
+            console.error("IndexedDBへの保存に失敗:", err);
+            alert("ファイルの保存に失敗しました。");
+        }
+    }
+
+    // 保存したファイルを読み出す
+    function getMediaFromDB(index) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const db = await openDB();
+                const transaction = db.transaction(STORE_NAME, "readonly");
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.get(`media_${index}`);
+                request.onsuccess = () => resolve(request.result); // Blobデータが返る
+                request.onerror = () => reject(request.error);
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
+    // ---------------------------------------------
+
+    // 設定データの読み込み
     if (localStorage.getItem('pwa_alarms')) {
         const saved = JSON.parse(localStorage.getItem('pwa_alarms'));
-        // データの互換性を保ちつつ復元
         alarms = alarms.map((alarm, i) => saved[i] ? { ...alarm, ...saved[i], active: false } : alarm);
     }
 
     const alarmListContainer = document.getElementById('alarm-list');
     
-    // 画面の生成
+    // UIの生成
     alarms.forEach((alarm, index) => {
         const item = document.createElement('div');
         item.className = 'alarm-item';
@@ -82,8 +141,8 @@
             </div>
             <div>
                 <label class="file-input-label">
-                    🎵 音源: 
-                    <input type="file" accept="audio/*" onchange="handleFileSelect(${index}, this)">
+                    🎵 音源/動画: 
+                    <input type="file" accept="audio/*,video/*" onchange="handleFileSelect(${index}, this)">
                     <span id="filename-${index}" class="file-name">${alarm.audioName}</span>
                 </label>
             </div>
@@ -91,7 +150,6 @@
         alarmListContainer.appendChild(item);
     });
 
-    // 入力値の更新と保存
     function updateAlarm(index, key, value) {
         if (key === 'sec') {
             let s = parseInt(value, 10);
@@ -100,46 +158,62 @@
             document.getElementById(`sec-${index}`).value = value;
         }
         alarms[index][key] = value;
+        if (alarms[index].active) {
+            alarms[index].active = false;
+            document.getElementById(`toggle-${index}`).checked = false;
+        }
         saveToStorage();
     }
 
-    // 💡 音楽ファイルが選ばれたときの処理（データをブラウザに記憶できる形式に変換する）
-    function handleFileSelect(index, input) {
+    // 💡 ファイル選択時にIndexedDBへ保存するよう変更
+    async function handleFileSelect(index, input) {
         const file = input.files[0];
         if (!file) return;
 
         alarms[index].audioName = file.name;
         document.getElementById(`filename-${index}`).innerText = file.name;
+        saveToStorage();
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            alarms[index].audioData = e.target.result; // Base64形式の音楽データ
-            saveToStorage();
-        };
-        reader.readAsDataURL(file);
+        // 巨大な動画・音楽ファイルをそのままデータベースに保存
+        await saveMediaToDB(index, file);
     }
 
     function toggleAlarm(index, isChecked) {
-        alarms[index].active = isChecked;
         if (isChecked && !alarms[index].time) {
             alert("「時間」は必ず設定してください。");
             document.getElementById(`toggle-${index}`).checked = false;
-            alarms[index].active = false;
+            return;
         }
+        alarms[index].active = isChecked;
         saveToStorage();
+
+        if (isChecked) {
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            if (context.state === 'suspended') context.resume();
+        }
     }
 
     function saveToStorage() {
-        // 容量制限を考慮し、audioDataを含めてローカルストレージに保存
-        try {
-            localStorage.setItem('pwa_alarms', JSON.stringify(alarms));
-        } catch (e) {
-            alert("音楽ファイルのサイズが大きすぎるため、アプリを閉じると曲の設定が消える可能性があります（2MB以下のmp3を推奨します）。");
+        localStorage.setItem('pwa_alarms', JSON.stringify(alarms));
+    }
+
+    // アラーム停止処理（音楽・動画の両方に対応）
+    function stopCurrentMedia() {
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            currentAudio = null;
         }
+        if (currentVideo) {
+            currentVideo.pause();
+            currentVideo.src = "";
+            currentVideo.style.display = 'none';
+        }
+        document.getElementById('stop-alarm-btn').style.display = 'none';
     }
 
     // メインループ
-    setInterval(() => {
+    setInterval(async () => {
         const now = new Date();
         const yyyy = now.getFullYear();
         const mm = String(now.getMonth() + 1).padStart(2, '0');
@@ -148,51 +222,56 @@
         const min = String(now.getMinutes()).padStart(2, '0');
         const ss = String(now.getSeconds()).padStart(2, '0');
 
+        const currentDateStr = `${yyyy}-${mm}-${dd}`;
+        const currentTimeStr = `${hh}:${min}:${ss}`;
+
         document.getElementById('clock').innerText = `${yyyy}/${mm}/${dd} ${hh}:${min}:${ss}`;
 
-        alarms.forEach((alarm, index) => {
-            if (!alarm.active) return;
+        for (let index = 0; index < alarms.length; index++) {
+            const alarm = alarms[index];
+            if (!alarm.active) continue;
 
-            let targetDate = alarm.date; 
-            if (!targetDate) {
-                const [alarmH, alarmM] = alarm.time.split(':');
-                const todayAlarmInstance = new Date(yyyy, now.getMonth(), now.getDate(), alarmH, alarmM, alarm.sec);
-
-                if (todayAlarmInstance < now) {
-                    todayAlarmInstance.setDate(todayAlarmInstance.getDate() + 1);
-                }
-
-                const tYear = todayAlarmInstance.getFullYear();
-                const tMonth = String(todayAlarmInstance.getMonth() + 1).padStart(2, '0');
-                const tDate = String(todayAlarmInstance.getDate()).padStart(2, '0');
-                targetDate = `${tYear}-${tMonth}-${tDate}`;
+            let isTrigger = false;
+            if (alarm.date) {
+                if (alarm.date === currentDateStr && alarm.time + ":" + alarm.sec === currentTimeStr) isTrigger = true;
+            } else {
+                if (alarm.time + ":" + alarm.sec === currentTimeStr) isTrigger = true;
             }
 
-            const [alarmH, alarmM] = alarm.time.split(':');
-            const currentDateStr = `${yyyy}-${mm}-${dd}`;
-            
-            if (targetDate === currentDateStr && hh === alarmH && min === alarmM && ss === alarm.sec) {
-                
-                // 💡 【新機能】音楽を鳴らす処理
-                if (alarm.audioData) {
-                    const audio = new Audio(alarm.audioData);
-                    audio.play().catch(err => {
-                        console.error("再生に失敗しました（ブラウザのセキュリティ制限）: ", err);
-                        alert(`⏰ アラーム ${index + 1} の時間です！\n(※ブラウザの制限により音がブロックされました)`);
-                    });
-                } else {
-                    // 音楽ファイルが未設定なら従来通りアラートを出す
-                    alert(`⏰ アラーム ${index + 1} の時間です！(音源未設定)`);
-                }
-                
+            if (isTrigger) {
+                // トグルをオフにする
                 document.getElementById(`toggle-${index}`).checked = false;
                 alarm.active = false;
                 saveToStorage();
+
+                // 💡 IndexedDBからファイルを取り出す
+                const fileBlob = await getMediaFromDB(index);
+
+                if (fileBlob) {
+                    stopCurrentMedia();
+                    // Blobデータからブラウザ用の一時的なURLを生成
+                    const mediaUrl = URL.createObjectURL(fileBlob);
+
+                    if (fileBlob.type.startsWith('video/')) {
+                        // 動画ファイルの場合
+                        currentVideo.src = mediaUrl;
+                        currentVideo.style.display = 'block';
+                        currentVideo.loop = true;
+                        currentVideo.play().catch(err => alert("動画の再生がブロックされました。画面をタップしてください。"));
+                    } else {
+                        // 音声ファイルの場合
+                        currentAudio = new Audio(mediaUrl);
+                        currentAudio.loop = true;
+                        currentAudio.play().catch(err => alert("音声の再生がブロックされました。画面をタップしてください。"));
+                    }
+                    document.getElementById('stop-alarm-btn').style.display = 'block';
+                } else {
+                    alert(`⏰ アラーム ${index + 1} の時間です！(ファイルが見つかりません)`);
+                }
             }
-        });
+        }
     }, 1000);
 
-    // サービスワーカー登録
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch(err => console.error(err));
     }
