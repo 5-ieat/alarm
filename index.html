@@ -53,6 +53,13 @@
 </div>
 
 <script>
+    // ユーザーに通知の許可を求める
+    Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+            console.log('通知が許可されました！');
+            // ここから通知を送る処理ができるようになります
+        }
+    });
     // 時間や設定など、軽いデータのみLocalStorageで管理する
     let alarms = [
         { date: "", time: "", sec: "00", active: false, audioName: "未設定" },
