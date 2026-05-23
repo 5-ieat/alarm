@@ -64,3 +64,8 @@ self.addEventListener('push', function(event) {
     // すべてのバックグラウンド処理（通知表示・音源準備）が完了するまでサービスワーカーを維持する
     event.waitUntil(Promise.all([notificationPromise, audioPromise]));
 });
+
+self.registration.showNotification('アラーム', {
+    body: 'アラームです！アプリを開いてアラームを消そう！',
+    vibrate: [200, 100, 200] // スマホをブブッと震わせる設定
+});
