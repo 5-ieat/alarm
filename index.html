@@ -258,7 +258,6 @@
                         currentVideo.style.display = 'none'; // 👈 常に非表示を維持
                         currentVideo.loop = true;
                         currentVideo.play().catch(err => alert("アラームの再生がブロックされました。画面をタップしてください。"));
-                    }
                     } else {
                         // 音声ファイルの場合
                         currentAudio = new Audio(mediaUrl);
