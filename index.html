@@ -248,25 +248,25 @@
                 const fileBlob = await getMediaFromDB(index);
 
                 if (fileBlob) {
-                    stopCurrentMedia();
+                    stopCurrentMedia(); // 既に鳴っているものがあれば止める
+        
                     // Blobデータからブラウザ用の一時的なURLを生成
                     const mediaUrl = URL.createObjectURL(fileBlob);
 
-                    if (fileBlob.type.startsWith('video/')) {
-                        // 動画ファイルの場合（映像は見せずに音だけ再生）
-                        currentVideo.src = mediaUrl;
-                        currentVideo.style.display = 'none'; // 👈 常に非表示を維持
-                        currentVideo.loop = true;
-                        currentVideo.play().catch(err => alert("アラームの再生がブロックされました。画面をタップしてください。"));
-                    } else {
-                        // 音声ファイルの場合
-                        currentAudio = new Audio(mediaUrl);
-                        currentAudio.loop = true;
-                        currentAudio.play().catch(err => alert("アラームの再生がブロックされました。画面をタップしてください。"));
-                    }
-                    document.getElementById('stop-alarm-btn').style.display = 'block';
-                } else {
-                    alert(`⏰ アラーム ${index + 1} の時間です！(ファイルが見つかりません)`);
+                    // 💡 動画(MP4等)であっても音声(MP3等)であっても、
+                    // すべて「Audio（音声）」として読み込ませることで、動画プレイヤーの起動を防ぎ、音だけを鳴らします。
+                    currentAudio = new Audio(mediaUrl);
+                    currentAudio.loop = true; // 止めるまでループ再生
+        
+                    currentAudio.play().catch(err => {
+                    console.error("再生制限: ", err);
+                    alert(`⏰ アラーム ${index + 1} の時間です！\n(※画面をタップすると音が鳴ります)`);
+                });
+
+                // 停止ボタンを表示
+                document.getElementById('stop-alarm-btn').style.display = 'block';
+            } else {
+                alert(`⏰ アラーム ${index + 1} の時間です！(ファイルが見つかりません)`);
                 }
             }
         }
