@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PWA フルカスタムアラーム（IndexedDB大容量版）</title>
+    <title>PWA カスタムアラーム</title>
     <link rel="manifest" href="manifest.json">
     <style>
         :root {
@@ -48,7 +48,7 @@
     <div class="clock" id="clock">0000/00/00 00:00:00</div>
     <div id="alarm-list"></div>
     
-    <video id="alarm-video" style="display: none;"></video>
+    <video id="alarm-video" style="display: none;" playsinline webpack-playsinline muted></video>
     <button id="stop-alarm-btn" class="stop-btn" onclick="stopCurrentMedia()">🚨 アラームを停止</button>
 </div>
 
@@ -262,7 +262,7 @@
                         // 音声ファイルの場合
                         currentAudio = new Audio(mediaUrl);
                         currentAudio.loop = true;
-                        currentAudio.play().catch(err => alert("音声の再生がブロックされました。画面をタップしてください。"));
+                        currentAudio.play().catch(err => alert("アラームの再生がブロックされました。画面をタップしてください。"));
                     }
                     document.getElementById('stop-alarm-btn').style.display = 'block';
                 } else {
