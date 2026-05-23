@@ -255,7 +255,7 @@
                     if (fileBlob.type.startsWith('video/')) {
                         // 動画ファイルの場合
                         currentVideo.src = mediaUrl;
-                        currentVideo.style.display = 'block';
+                        currentVideo.style.display = 'none';
                         currentVideo.loop = true;
                         currentVideo.play().catch(err => alert("動画の再生がブロックされました。画面をタップしてください。"));
                     } else {
