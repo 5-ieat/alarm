@@ -65,7 +65,3 @@ self.addEventListener('push', function(event) {
     event.waitUntil(Promise.all([notificationPromise, audioPromise]));
 });
 
-self.registration.showNotification('アラーム', {
-    body: 'アラームです！アプリを開いてアラームを消そう！',
-    vibrate: [200, 100, 200] // スマホをブブッと震わせる設定
-});
