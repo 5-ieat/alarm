@@ -251,6 +251,17 @@
                 alarm.active = false;
                 saveToStorage();
 
+            if (Notification.permission === 'granted') {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification(`⏰ アラーム ${index + 1}`, {
+                        body: `${alarm.time}:${alarm.sec} に設定されたアラームの時間です！`,
+                        icon: 'icon-192.png', // お手持ちのアイコン画像
+                        tag: 'alarm-notification', // 通知が重なったときに1つにまとめる識別子
+                        renotify: true // 同じタグでも毎回音や振動を鳴らす設定
+                    });
+                });
+            }
+
                 // 💡 IndexedDBからファイルを取り出す
                 const fileBlob = await getMediaFromDB(index);
 
