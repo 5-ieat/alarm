@@ -71,6 +71,28 @@
 </div>
 
 <script>
+    // ★追加：ページが読み込まれた時に、環境を判定して<p>を追加する関数
+    function displayEnvironment() {
+        const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        const isMobile = window.innerWidth <= 768; // 画面幅768px以下をスマホとみなす
+
+        // 追加したい先のdivを取得
+        const container = document.getElementById('env-container');
+        
+        // 新しい <p> タグを作る
+        const p = document.createElement('p');
+        p.className = 'env-badge'; // さっき作ったCSSの装飾を適用
+
+        // 条件に応じて文章と見た目を分ける
+        if (isMobile) {
+            p.textContent = 'ホーム画面に共有すると使えます！';
+            p.style.background = '#e0f2fe'; // 薄い青
+            p.style.color = '#0369a1';
+        }
+
+        // 実際に画面に追加する
+        container.appendChild(p);
+    }
     // ユーザーに通知の許可を求める
     Notification.requestPermission().then(permission => {
         if (permission === 'granted') {
