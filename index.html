@@ -84,11 +84,13 @@
         p.className = 'env-badge'; // さっき作ったCSSの装飾を適用
 
         // 条件に応じて文章と見た目を分ける
-        if (isMobile) {
-            p.textContent = 'ホーム画面に共有すると使えます！';
-            p.style.background = '#e0f2fe'; // 薄い青
+    if (isPWA) {
+    } else if (isMobile) {
+            p.textContent = '「ホーム画面に追加」でホーム画面に置くと動くよ！';
+            p.style.background = '#f1f5f9'; // グレー
             p.style.color = '#0369a1';
-        }
+    } else {
+    }
 
         // 実際に画面に追加する
         container.appendChild(p);
