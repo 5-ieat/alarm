@@ -38,14 +38,29 @@
         /* 停止ボタン */
         .stop-btn { display: none; width: 100%; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; margin-top: 15px; cursor: pointer; }
         
-        /* ビデオ要素（動画アラーム用、非表示にして音だけ鳴らすことも可能） */
+        /* ビデオ要素 */
         video { display: none; width: 100%; max-height: 240px; margin-top: 15px; border-radius: 8px; background: black; }
+
+        /* ★追加：環境表示メッセージ用のスタイル（お好みで調整してください） */
+        .env-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: #e2e8f0;
+            color: #475569;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="clock" id="clock">0000/00/00 00:00:00</div>
+    
+    <div id="env-container"></div>
+
     <div id="alarm-list"></div>
     
     <video id="alarm-video" style="display: none;" playsinline webpack-playsinline></video>
@@ -84,31 +99,35 @@
         p.className = 'env-badge'; // さっき作ったCSSの装飾を適用
 
         // 条件に応じて文章と見た目を分ける
-    if (isPWA) {
-        p.textContent = '📱 PWA（アプリ版）で起動中';
-        p.style.background = '#dcfce7'; // 薄い緑
-        p.style.color = '#15803d';
-    } else if (isMobile) {
-        p.textContent = '🌐 スマホブラウザ版で閲覧中';
-        p.style.background = '#e0f2fe'; // 薄い青
-        p.style.color = '#0369a1';
-    } else {
-        p.textContent = '💻 PCブラウザ版で閲覧中';
-        p.style.background = '#f1f5f9'; // 薄いグレー
-        p.style.color = '#475569';
-    }
+        if (isPWA) {
+            p.textContent = '📱 PWA（アプリ版）で起動中';
+            p.style.background = '#dcfce7'; // 薄い緑
+            p.style.color = '#15803d';
+        } else if (isMobile) {
+            p.textContent = '🌐 スマホブラウザ版で閲覧中';
+            p.style.background = '#e0f2fe'; // 薄い青
+            p.style.color = '#0369a1';
+        } else {
+            p.textContent = '💻 PCブラウザ版で閲覧中';
+            p.style.background = '#f1f5f9'; // 薄いグレー
+            p.style.color = '#475569';
+        }
 
         // 実際に画面に追加する
         container.appendChild(p);
     }
-    // ユーザーに通知の許可を求める
+
+    // ★追加：関数の実行を登録（既存のコードの邪魔をしない場所に置きます）
+    window.addEventListener('DOMContentLoaded', displayEnvironment);
+
+
+    // --- 以下、既存のアラーム処理コード（そのまま） ---
     Notification.requestPermission().then(permission => {
         if (permission === 'granted') {
             console.log('通知が許可されました！');
-            // ここから通知を送る処理ができるようになります
         }
     });
-    // 時間や設定など、軽いデータのみLocalStorageで管理する
+
     let alarms = [
         { date: "", time: "", sec: "00", active: false, audioName: "未設定" },
         { date: "", time: "", sec: "00", active: false, audioName: "未設定" },
@@ -120,7 +139,6 @@
     let currentAudio = null; 
     let currentVideo = document.getElementById('alarm-video');
 
-    // --- 💡 [新機能] IndexedDBの初期化と操作関数 ---
     const DB_NAME = "AlarmMediaDB";
     const STORE_NAME = "mediaFiles";
 
@@ -138,7 +156,6 @@
         });
     }
 
-    // ファイルを無変換（Blob）のまま大容量保存
     async function saveMediaToDB(index, file) {
         try {
             const db = await openDB();
@@ -151,7 +168,6 @@
         }
     }
 
-    // 保存したファイルを読み出す
     function getMediaFromDB(index) {
         return new Promise(async (resolve, reject) => {
             try {
@@ -159,16 +175,14 @@
                 const transaction = db.transaction(STORE_NAME, "readonly");
                 const store = transaction.objectStore(STORE_NAME);
                 const request = store.get(`media_${index}`);
-                request.onsuccess = () => resolve(request.result); // Blobデータが返る
+                request.onsuccess = () => resolve(request.result);
                 request.onerror = () => reject(request.error);
             } catch (err) {
                 reject(err);
             }
         });
     }
-    // ---------------------------------------------
 
-    // 設定データの読み込み
     if (localStorage.getItem('pwa_alarms')) {
         const saved = JSON.parse(localStorage.getItem('pwa_alarms'));
         alarms = alarms.map((alarm, i) => saved[i] ? { ...alarm, ...saved[i], active: false } : alarm);
@@ -176,7 +190,6 @@
 
     const alarmListContainer = document.getElementById('alarm-list');
     
-    // UIの生成
     alarms.forEach((alarm, index) => {
         const item = document.createElement('div');
         item.className = 'alarm-item';
@@ -220,7 +233,6 @@
         saveToStorage();
     }
 
-    // 💡 ファイル選択時にIndexedDBへ保存するよう変更
     async function handleFileSelect(index, input) {
         const file = input.files[0];
         if (!file) return;
@@ -228,8 +240,6 @@
         alarms[index].audioName = file.name;
         document.getElementById(`filename-${index}`).innerText = file.name;
         saveToStorage();
-
-        // 巨大な動画・音楽ファイルをそのままデータベースに保存
         await saveMediaToDB(index, file);
     }
 
@@ -252,7 +262,6 @@
         localStorage.setItem('pwa_alarms', JSON.stringify(alarms));
     }
 
-    // アラーム停止処理（音楽・動画の両方に対応）
     function stopCurrentMedia() {
         if (currentAudio) {
             currentAudio.pause();
@@ -267,7 +276,6 @@
         document.getElementById('stop-alarm-btn').style.display = 'none';
     }
 
-    // メインループ
     setInterval(async () => {
         const now = new Date();
         const yyyy = now.getFullYear();
@@ -294,45 +302,35 @@
             }
 
             if (isTrigger) {
-                // トグルをオフにする
                 document.getElementById(`toggle-${index}`).checked = false;
                 alarm.active = false;
                 saveToStorage();
 
-            if (Notification.permission === 'granted') {
-                navigator.serviceWorker.ready.then(registration => {
-                    registration.showNotification(`⏰ アラーム ${index + 1}`, {
-                        body: `アラームです！アプリを開いてアラームを消そう！`,
-                        icon: 'icon-192.png', // お手持ちのアイコン画像
-                        tag: 'alarm-notification', // 通知が重なったときに1つにまとめる識別子
-                        renotify: true // 同じタグでも毎回音や振動を鳴らす設定
+                if (Notification.permission === 'granted') {
+                    navigator.serviceWorker.ready.then(registration => {
+                        registration.showNotification(`⏰ アラーム ${index + 1}`, {
+                            body: `アラームです！アプリを開いてアラームを消しよう！`,
+                            icon: 'icon-192.png',
+                            tag: 'alarm-notification',
+                            renotify: true
+                        });
                     });
-                });
-            }
+                }
 
-                // 💡 IndexedDBからファイルを取り出す
                 const fileBlob = await getMediaFromDB(index);
 
                 if (fileBlob) {
-                    stopCurrentMedia(); // 既に鳴っているものがあれば止める
-        
-                    // Blobデータからブラウザ用の一時的なURLを生成
+                    stopCurrentMedia();
                     const mediaUrl = URL.createObjectURL(fileBlob);
-
-                    // 💡 動画(MP4等)であっても音声(MP3等)であっても、
-                    // すべて「Audio（音声）」として読み込ませることで、動画プレイヤーの起動を防ぎ、音だけを鳴らします。
                     currentAudio = new Audio(mediaUrl);
-                    currentAudio.loop = true; // 止めるまでループ再生
-        
+                    currentAudio.loop = true;
                     currentAudio.play().catch(err => {
-                    console.error("再生制限: ", err);
-                    alert(`⏰ アラーム ${index + 1} の時間です！\n(※画面をタップすると音が鳴ります)`);
-                });
-
-                // 停止ボタンを表示
-                document.getElementById('stop-alarm-btn').style.display = 'block';
-            } else {
-                alert(`⏰ アラーム ${index + 1} の時間です！(ファイルが見つかりません)`);
+                        console.error("再生制限: ", err);
+                        alert(`⏰ アラーム ${index + 1} の時間です！\n(※画面をタップすると音が鳴ります)`);
+                    });
+                    document.getElementById('stop-alarm-btn').style.display = 'block';
+                } else {
+                    alert(`⏰ アラーム ${index + 1} の時間です！(ファイルが見つかりません)`);
                 }
             }
         }
