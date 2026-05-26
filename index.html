@@ -85,11 +85,17 @@
 
         // 条件に応じて文章と見た目を分ける
     if (isPWA) {
+        p.textContent = '📱 PWA（アプリ版）で起動中';
+        p.style.background = '#dcfce7'; // 薄い緑
+        p.style.color = '#15803d';
     } else if (isMobile) {
-            p.textContent = '「ホーム画面に追加」でホーム画面に置くと動くよ！';
-            p.style.background = '#f1f5f9'; // グレー
-            p.style.color = '#0369a1';
+        p.textContent = '🌐 スマホブラウザ版で閲覧中';
+        p.style.background = '#e0f2fe'; // 薄い青
+        p.style.color = '#0369a1';
     } else {
+        p.textContent = '💻 PCブラウザ版で閲覧中';
+        p.style.background = '#f1f5f9'; // 薄いグレー
+        p.style.color = '#475569';
     }
 
         // 実際に画面に追加する
