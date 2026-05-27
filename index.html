@@ -65,6 +65,25 @@
     
     <video id="alarm-video" style="display: none;" playsinline webpack-playsinline></video>
     <button id="stop-alarm-btn" class="stop-btn" onclick="stopCurrentMedia()">🚨 アラームを停止</button>
+    <div class="weekday-group">
+        <p>アラームをかける通知の時間</p>
+        <p>--------------------------------------</p>
+        <label><input type="checkbox" value="0">日</label>
+        <label><input type="checkbox" value="1">月</label>
+        <label><input type="checkbox" value="2">火</label>
+        <label><input type="checkbox" value="3">水</label>
+        <label><input type="checkbox" value="4">木</label>
+        <label><input type="checkbox" value="5">金</label>
+        <label><input type="checkbox" value="6">土</label>
+        <p>曜日</p>
+        <p>--------------------------------------</p>
+        <input type="number" min="0" max="23" value="21">
+        <p>時</p>
+        <p>--------------------------------------</p>
+        <input type="number" min="0" max="59" value="0">
+        <p>分</p>
+        <p>--------------------------------------</p>
+    </div>
 
 <script>
     // ★追加：ページが読み込まれた時に、環境を判定して<p>を追加する関数
@@ -313,25 +332,6 @@
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch(err => console.error(err));
     }
-    <div class="weekday-group">
-    <p>アラームをかける通知の時間</p>
-    <p>--------------------------------------</p>
-    <label><input type="checkbox" value="0">日</label>
-    <label><input type="checkbox" value="1">月</label>
-    <label><input type="checkbox" value="2">火</label>
-    <label><input type="checkbox" value="3">水</label>
-    <label><input type="checkbox" value="4">木</label>
-    <label><input type="checkbox" value="5">金</label>
-    <label><input type="checkbox" value="6">土</label>
-    <p>曜日</p>
-    <p>--------------------------------------</p>
-    <input type="number" min="0" max="23" value="21">
-    <p>時</p>
-    <p>--------------------------------------</p>
-    <input type="number" min="0" max="59" value="0">
-    <p>分</p>
-    <p>--------------------------------------</p>
-</div>
 </script>
 </body>
 </html>
