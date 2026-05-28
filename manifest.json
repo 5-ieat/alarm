@@ -1,13 +1,12 @@
 {
   "name": "PWA Web Alarm",
-  "short_name": "PWAアラーム",
+  "short_name": "好きな音声をアラームにできるアラーム",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#f0f0f0",
   "theme_color": "#007bff",
   "icons": [
     {
-      "src": "icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }
