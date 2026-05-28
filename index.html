@@ -90,17 +90,18 @@
     function displayEnvironment() {
         const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
         const isMobile = window.innerWidth <= 768; // 画面幅768px以下をスマホとみなす
-        
-        // 新しい <p> タグを作る
-        const p = document.createElement('p');
-        p.className = 'env-badge'; // さっき作ったCSSの装飾を適用
+
+        const container = document.getElementById('main-container');
+        const envContainer = document.getElementById('env-container');
 
         // 条件に応じて文章と見た目を分ける
         if (!isPWA && isMobile) {
+            const p = document.createElement('p');
+            p.className = 'env-badge';
             p.textContent = '「ホーム画面に追加」で追加しないと使えないよ！';
-            p.style.background = '#f1f5f9';
-            p.style.color = '#475569';
-            container.appendChild(p);
+            p.style.background = '#fef2f2';
+            p.style.color = '#ef4444';
+            envContainer.appendChild(p);
         }
     }
 
