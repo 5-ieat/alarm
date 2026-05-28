@@ -84,7 +84,26 @@
         <p>分</p>
         <p>--------------------------------------</p>
     </div>
-
+    <div class="timer-group" style="background: #fef3c7; border: 2px dashed #f59e0b; padding: 15px; border-radius: 12px; margin-top: 20px; text-align: left;">
+        <div class="alarm-header">
+            <span>⏳ タイマー（カウントダウン）</span>
+            <button id="timer-btn" onclick="toggleTimer()" style="background: #f59e0b; color: white; border: none; padding: 6px 15px; border-radius: 6px; font-weight: bold; cursor: pointer;">スタート</button>
+        </div>
+    
+        <div class="time-inline" style="display: flex; align-items: center; gap: 5px; margin-top: 10px;">
+            <input type="number" id="timer-min" min="0" max="180" value="3" style="font-size: 1rem; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; width: 60px; text-align: center;"> 分
+            <input type="number" id="timer-sec" min="0" max="59" value="0" style="font-size: 1rem; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; width: 60px; text-align: center;"> 秒
+            <span id="timer-display" style="font-size: 1.2rem; font-weight: bold; color: #d97706; margin-left: auto; font-variant-numeric: tabular-nums;"></span>
+        </div>
+    
+        <div style="margin-top: 10px;">
+            <label class="file-input-label">
+                🎵 タイマー用音源: 
+                <input type="file" accept="audio/*,video/*" onchange="handleTimerFileSelect(this)">
+                <span id="timer-filename" class="file-name">未設定</span>
+            </label>
+        </div>
+    </div>
 <script>
     // ★追加：ページが読み込まれた時に、環境を判定して<p>を追加する関数
     function displayEnvironment() {
@@ -249,7 +268,92 @@
     function saveToStorage() {
         localStorage.setItem('pwa_alarms', JSON.stringify(alarms));
     }
+// ==========================================
+// ★ 追加：タイマー（カウントダウン）用ロジック
+// ==========================================
+    let timerEndTime = null; // タイマーが終了する未来の時刻（ミリ秒）
+    let timerIntervalId = null; // カウントダウン表示用のインターバルID
+    let timerAudioName = "未設定";
 
+    // ページ読み込み時にタイマー音源の名前だけ復元
+    window.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem('pwa_timer_audio_name')) {
+            timerAudioName = localStorage.getItem('pwa_timer_audio_name');
+            document.getElementById('timer-filename').innerText = timerAudioName;
+        }
+    });
+
+// タイマー用ファイル選択
+    async function handleTimerFileSelect(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        timerAudioName = file.name;
+        document.getElementById('timer-filename').innerText = file.name;
+        localStorage.setItem('pwa_timer_audio_name', file.name);
+        // IndexedDBのキー「media_timer」に保存
+        await saveMediaToDB('timer', file);
+    }
+
+// タイマーの開始・停止切り替え
+    function toggleTimer() {
+        const btn = document.getElementById('timer-btn');
+        const display = document.getElementById('timer-display');
+
+    // すでに動いている場合は「キャンセル（停止）」
+        if (timerIntervalId) {
+            clearInterval(timerIntervalId);
+            timerIntervalId = null;
+            timerEndTime = null;
+            btn.innerText = "スタート";
+            btn.style.background = "#f59e0b";
+            display.innerText = "";
+            return;
+        }
+
+    // 入力値の取得
+        const min = parseInt(document.getElementById('timer-min').value, 10) || 0;
+        const sec = parseInt(document.getElementById('timer-sec').value, 10) || 0;
+        const totalMs = ((min * 60) + sec) * 1000;
+
+        if (totalMs <= 0) {
+            alert("時間を設定してください。");
+            return;
+        }
+
+    // iOS/Android対策：ユーザー操作をトリガーにAudioContextを解放
+        const context = new (window.AudioContext || window.webkitAudioContext)();
+        if (context.state === 'suspended') context.resume();
+
+    // 現在時刻に設定時間を足して「終了時刻」を固定する
+        timerEndTime = Date.now() + totalMs;
+        btn.innerText = "キャンセル";
+        btn.style.background = "#64748b";
+
+    // 画面のカウントダウン表示を更新するループ（ミリ秒単位で正確に計算）
+        timerIntervalId = setInterval(() => {
+            const remainingMs = timerEndTime - Date.now();
+
+            if (remainingMs <= 0) {
+            // タイマー終了時の処理
+                clearInterval(timerIntervalId);
+                timerIntervalId = null;
+                timerEndTime = null;
+                btn.innerText = "スタート";
+                btn.style.background = "#f59e0b";
+                display.innerText = "タイムアップ！";
+
+            // アラーム鳴動処理を呼び出す（引数に 'timer' を指定）
+                triggerAlarmNotification(`⏳ タイマー終了`, 'timer');
+            } else {
+            // 残り時間の表示更新
+                const rMin = Math.floor(remainingMs / 1000 / 60);
+                const rSec = Math.floor((remainingMs / 1000) % 60);
+                display.innerText = `残り ${String(rMin).padStart(2, '0')}:${String(rSec).padStart(2, '0')}`;
+            }
+        }, 250); // 画面更新は0.25秒ごと
+    }
+    
     function stopCurrentMedia() {
         if (currentAudio) {
             currentAudio.pause();
