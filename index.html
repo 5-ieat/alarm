@@ -90,9 +90,6 @@
     function displayEnvironment() {
         const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
         const isMobile = window.innerWidth <= 768; // 画面幅768px以下をスマホとみなす
-
-        // 追加したい先のdivを取得
-        const container = document.getElementById('env-container');
         
         // 新しい <p> タグを作る
         const p = document.createElement('p');
