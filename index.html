@@ -76,6 +76,23 @@
             <option value="Fri">金</option>
             <option value="Satur">土</option>
         </select>
+        <script>
+          // ドロップダウンの要素を取得
+          const selectElement = document.getElementById('skills');
+
+          // クリック（mousedown）したときの動きをカスタムする
+          selectElement.addEventListener('mousedown', function(e) {
+            // 本来の「クリックしたら他が消える」動きをストップする
+            e.preventDefault();
+
+            // クリックされた選択肢（option）を特定する
+            const option = e.target;
+            if (option.tagName === 'OPTION') {
+              // 選択されていたら解除、解除されていたら選択状態にする
+              option.selected = !option.selected;
+            }
+          });
+        </script>
         <label for="color-select">曜日</label>
         <input type="number" min="0" max="23" value="21">
         <label for="color-select">時</label>
