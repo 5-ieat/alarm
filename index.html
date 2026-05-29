@@ -67,16 +67,17 @@
     <button id="stop-alarm-btn" class="stop-btn" onclick="stopCurrentMedia()">🚨 アラームを停止</button>
     <div class="weekday-group">
         <p>アラームをかける通知の時間</p>
-        <select name="youbi" id="youbi-select" multiple size="1">
-            <option value="" selected hidden></option>
-            <option value="Sun">日</option>
-            <option value="Mon">月</option>
-            <option value="Tues">火</option>
-            <option value="Wednes">水</option>
-            <option value="Thurs">木</option>
-            <option value="Fri">金</option>
-            <option value="Satur">土</option>
-        </select>
+        <details>
+            <select name="youbi" id="youbi-select" multiple size="1">
+                <option value="Sun">日</option>
+                <option value="Mon">月</option>
+                <option value="Tues">火</option>
+                <option value="Wednes">水</option>
+                <option value="Thurs">木</option>
+                <option value="Fri">金</option>
+                <option value="Satur">土</option>
+            </select>
+        </details>
         <script>
           // ドロップダウンの要素を取得
           const selectElement = document.getElementById('skills');
