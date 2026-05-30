@@ -66,7 +66,7 @@
     <video id="alarm-video" style="display: none;" playsinline webpack-playsinline></video>
     <button id="stop-alarm-btn" class="stop-btn" onclick="stopCurrentMedia()">🚨 アラームを停止</button>
     <div class="weekday-group" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; justify-content: center; margin-top: 15px;">
-    <p>アラームをかける通知の時間</p>
+    <label for="color-select">アラームをかける通知の時間</label>
     <script>
         document.querySelectorAll('.options-box input[type="checkbox"]').forEach(checkbox => {
             checkbox.addEventListener('change', () => {
