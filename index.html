@@ -67,22 +67,6 @@
     <button id="stop-alarm-btn" class="stop-btn" onclick="stopCurrentMedia()">🚨 アラームを停止</button>
     <div class="weekday-group" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; justify-content: center; margin-top: 15px;">
     <label for="color-select">アラームをかける通知の時間</label>
-    <script>
-        document.querySelectorAll('.options-box input[type="checkbox"]').forEach(checkbox => {
-            checkbox.addEventListener('change', () => {
-                const checkedLabels = [];
-                document.querySelectorAll('.options-box input[type="checkbox"]:checked').forEach(cb => {
-                    checkedLabels.push(cb.parentElement.textContent.trim());
-                });
-                const summary = document.querySelector('.custom-select summary');
-                if (checkedLabels.length === 0) {
-                    summary.textContent = '曜日';
-                } else {
-                    summary.textContent = checkedLabels.join(', '); // 選んだ曜日をそのまま表示（例：月曜日, 水曜日）
-                }
-            });
-        });
-    </script>
         <div class="custom-select" style="position: relative; width: 100px; margin: 10px auto; text-align: left;">
             <details style="background: white; border: 1px solid #cbd5e1; border-radius: 6px;">
                 <summary style="padding: 8px; cursor: pointer; list-style: none; font-size: 0.9rem; color: #334155; text-align: center;">曜日</summary>
@@ -101,6 +85,22 @@
                         </div>
                     </details>
                 </div>
+    <script>
+        document.querySelectorAll('.options-box input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const checkedLabels = [];
+                document.querySelectorAll('.options-box input[type="checkbox"]:checked').forEach(cb => {
+                    checkedLabels.push(cb.parentElement.textContent.trim());
+                });
+                const summary = document.querySelector('.custom-select summary');
+                if (checkedLabels.length === 0) {
+                    summary.textContent = '曜日';
+                } else {
+                    summary.textContent = checkedLabels.join(', '); // 選んだ曜日をそのまま表示（例：月曜日, 水曜日）
+                }
+            });
+        });
+    </script>
         <label for="color-select">曜日</label>
         <input type="number" min="0" max="23" value="21">
         <label for="color-select">時</label>
