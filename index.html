@@ -70,15 +70,15 @@
     
     <div class="custom-select" style="position: relative; width: 200px; margin: 10px auto; text-align: left;">
         <details style="background: white; border: 1px solid #cbd5e1; border-radius: 6px;">
-            <summary style="padding: 8px; cursor: pointer; list-style: none; font-size: 0.9rem; color: #334155;">曜日を選択してください</summary>
+            <summary style="padding: 8px; cursor: pointer; list-style: none; font-size: 0.9rem; color: #334155;">曜日</summary>
             <div class="options-box" style="position: absolute; top: 100%; left: 0; width: 100%; border: 1px solid #cbd5e1; border-top: none; background: white; z-index: 100; max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; padding: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); box-sizing: border-box;">
-                <label style="padding: 6px; cursor: pointer; display: block;"><input type="checkbox" name="youbi" value="Sun"> 日曜日</label>
-                <label style="padding: 6px; cursor: pointer; display: block;"><input type="checkbox" name="youbi" value="Mon"> 月曜日</label>
-                <label style="padding: 6px; cursor: pointer; display: block;"><input type="checkbox" name="youbi" value="Tues"> 火曜日</label>
-                <label style="padding: 6px; cursor: pointer; display: block;"><input type="checkbox" name="youbi" value="Wednes"> 水曜日</label>
-                <label style="padding: 6px; cursor: pointer; display: block;"><input type="checkbox" name="youbi" value="Thurs"> 木曜日</label>
-                <label style="padding: 6px; cursor: pointer; display: block;"><input type="checkbox" name="youbi" value="Fri"> 金曜日</label>
-                <label style="padding: 6px; cursor: pointer; display: block;"><input type="checkbox" name="youbi" value="Satur"> 土曜日</label>
+                <label style="padding: 6px; cursor: pointer; display: block;"><input type="checkbox" name="youbi" value="Sun"> 日</label>
+                <label style="padding: 6px; cursor: pointer; display: block;"><input type="checkbox" name="youbi" value="Mon"> 月</label>
+                <label style="padding: 6px; cursor: pointer; display: block;"><input type="checkbox" name="youbi" value="Tues"> 火</label>
+                <label style="padding: 6px; cursor: pointer; display: block;"><input type="checkbox" name="youbi" value="Wednes"> 水</label>
+                <label style="padding: 6px; cursor: pointer; display: block;"><input type="checkbox" name="youbi" value="Thurs"> 木</label>
+                <label style="padding: 6px; cursor: pointer; display: block;"><input type="checkbox" name="youbi" value="Fri"> 金</label>
+                <label style="padding: 6px; cursor: pointer; display: block;"><input type="checkbox" name="youbi" value="Satur"> 土</label>
             </div>
         </details>
     </div>
@@ -92,7 +92,7 @@
                 });
                 const summary = document.querySelector('.custom-select summary');
                 if (checkedLabels.length === 0) {
-                    summary.textContent = '曜日を選択してください';
+                    summary.textContent = '曜日';
                 } else {
                     summary.textContent = checkedLabels.join(', '); // 選んだ曜日をそのまま表示（例：月曜日, 水曜日）
                 }
