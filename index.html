@@ -93,20 +93,7 @@
     <input type="number" min="0" max="59" value="0" style="font-size: 1rem; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; width: 50px; text-align: center;">
     <label for="color-select" style="font-size: 0.9rem;">分</label>
 
-</div> ```
-
----
-
-### 💡 レイアウト調整の解説
-
-1. **`display: flex;` の魔法**
-   親である `weekday-group` にこれを指定したことで、その中にある「カスタム曜日ボタン」「曜日（テキスト）」「時の入力欄」「時（テキスト）」が、左から右へ順番に1列で綺麗に整列します。
-2. **`align-items: center;`**
-   ボタンや入力ボックス、文字の「縦方向の中心」をぴったり揃えます。これがないと、文字だけが上に浮いたりボックスが下にズレたりしてガタガタに見えてしまいます。
-3. **`gap: 8px;`**
-   要素と要素の間に、程よい「すき間（8ピクセル）」を自動で空けてくれます。文字と入力欄がくっつきすぎて窮屈になるのを防ぎます。
-4. **`width: 100%;` への対処**
-   「アラームをかける通知の時間」というタイトル文字だけは、横並びの列に混ぜずに上に配置したいため、`width: 100%;` を指定して1行を丸ごと占有させています。
+</div>
     <div class="timer-group" style="background: #fef3c7; border: 2px dashed #f59e0b; padding: 15px; border-radius: 12px; margin-top: 20px; text-align: left;">
         <div class="alarm-header">
             <span>⏳ タイマー（カウントダウン）</span>
