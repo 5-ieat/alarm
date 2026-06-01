@@ -231,11 +231,11 @@
                 <label class="file-input-label">
                     🎵 音源/動画: 
                     <input type="file" accept="audio/*,video/*" onchange="handleFileSelect(${index}, this)">
-                    <span id="filename-${index}" class="file-name">${alarm.audioName}</span>
+                    
                 </label>
             </div>
         `;
-        // alarmListContainer.appendChild(item);
+        alarmListContainer.appendChild(item);
     });
 
     function updateAlarm(index, key, value) {
