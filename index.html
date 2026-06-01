@@ -211,7 +211,7 @@
     alarms.forEach((alarm, index) => {
         const item = document.createElement('div');
         item.className = 'alarm-item';
-        // item.innerHTML = `
+        item.innerHTML = `
             <div class="alarm-header">
                 <span>⏰ アラーム ${index + 1}</span>
                 <label class="switch">
@@ -231,7 +231,7 @@
                     <input type="file" accept="audio/*,video/*" onchange="handleFileSelect(${index}, this)">
                 </label>
             </div>
-        // `;
+        `;
         alarmListContainer.appendChild(item);
     });
 
