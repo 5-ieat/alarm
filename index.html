@@ -361,7 +361,7 @@
                 const rSec = Math.floor((remainingMs / 1000) % 60);
                 display.innerText = `残り ${String(rMin).padStart(2, '0')}:${String(rSec).padStart(2, '0')}`;
             }
-        }, 250); // 画面更新は0.25秒ごと
+        }, 1000); // 画面更新は0.25秒ごと
     }
     
     function stopCurrentMedia() {
