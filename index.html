@@ -62,6 +62,27 @@
             background: #e2e8f0;
             color: #475569;
         }
+
+        /* 元のファイル選択ボタンを完全に隠す */
+        .custom-file-btn input[type="file"] {
+            display: none;
+        }
+
+        /* 代わりのボタンのデザイン */
+        .custom-file-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        /* ホバーしたときの動き */
+        .custom-file-btn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -239,7 +260,10 @@
             <div>
                 <label class="file-input-label">
                     🎵 音源/動画: 
-                    <input type="file" accept="audio/*,video/*" onchange="handleFileSelect(${index}, this)">
+                    <label class="custom-file-btn">
+                        ファイルを選択
+                        <input type="file" name="example">
+                    </label>
                     <span id="filename-${index}" class="file-name">${alarm.audioName}</span>
                 </label>
             </div>
