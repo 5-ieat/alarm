@@ -34,7 +34,6 @@
         .sec-input { width: 50px; text-align: center; }
         
         /* ファイル選択 */
-        .file-input-label { font-size: 0.85rem; display: block; margin-top: 5px; color: #0284c7; }
         .file-name { font-size: 0.85rem; color: #0284c7; font-weight: bold; margin-left: 5px; }
 
         /* トグルスイッチ */
@@ -123,6 +122,7 @@
             <label class="file-input-label">
                 🎵 タイマー用音源: 
                 <input type="file" accept="audio/*,video/*" onchange="handleTimerFileSelect(this)">
+                <span id="filename-${index}" class="file-name">${alarm.audioName}</span>
             </label>
         </div>
     </div>
@@ -239,7 +239,6 @@
             <div>
                 <label class="file-input-label">
                     🎵 音源/動画: 
-                    <input type="file" accept="audio/*,video/*" onchange="handleFileSelect(${index}, this)">
                     <span id="filename-${index}" class="file-name">${alarm.audioName}</span>
                 </label>
             </div>
