@@ -35,6 +35,7 @@
         
         /* ファイル選択 */
         .file-input-label { font-size: 0.85rem; display: block; margin-top: 5px; color: #0284c7; }
+        .file-name { font-size: 0.85rem; color: #0284c7; font-weight: bold; margin-left: 5px; }
 
         /* トグルスイッチ */
         .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
@@ -239,6 +240,7 @@
                 <label class="file-input-label">
                     🎵 音源/動画: 
                     <input type="file" accept="audio/*,video/*" onchange="handleFileSelect(${index}, this)">
+                    <span id="filename-${index}" class="file-name">${alarm.audioName}</span>
                 </label>
             </div>
         `;
