@@ -145,7 +145,7 @@
                 🎵 タイマー用音源: 
                 <input type="file" accept="audio/*,video/*" onchange="handleTimerFileSelect(this)">
             </label>
-            <span id="filename-${index}" class="file-name">${alarm.audioName}</span>
+            <span id="filename-${index}" class="file-name">${handleTimerFileSelect(this)}</span>
         </div>
     </div>
 <script>
