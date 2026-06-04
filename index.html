@@ -115,12 +115,14 @@
     <video id="alarm-video" style="display: none;" playsinline webpack-playsinline></video>
     <button id="stop-alarm-btn" class="stop-btn" onclick="stopCurrentMedia()">🚨 アラームを停止</button>
  <div class="weekday-group" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; justify-content: center; margin-top: 15px;">
-    
-    <span style="margin: 0; font-weight: bold; font-size: 0.9rem; width: 100%; text-align: center; margin-bottom: 5px;">アラームをかける通知の時間</span>
-     <label class="switch">
-        <input type="checkbox" id="toggle-${index}" ${alarm.active ? 'checked' : ''} onchange="toggleAlarm(${index}, this.checked)">
-        <span class="slider"></span>
-    </label>
+
+    <div>
+        <span style="margin: 0; font-weight: bold; font-size: 0.9rem; width: 100%; text-align: center; margin-bottom: 5px;">アラームをかける通知の時間</span>
+        <label class="switch">
+            <input type="checkbox" id="toggle-${index}" ${alarm.active ? 'checked' : ''} onchange="toggleAlarm(${index}, this.checked)">
+            <span class="slider"></span>
+        </label>
+    </div>
     <div class="custom-select" style="position: relative; width: 100px; text-align: left;">
         <details style="background: white; border: 1px solid #cbd5e1; border-radius: 6px;">
             <summary style="padding: 8px; cursor: pointer; list-style: none; font-size: 0.9rem; color: #334155; text-align: center;">曜日</summary>
