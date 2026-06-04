@@ -143,9 +143,12 @@
         <div style="margin-top: 10px;">
             <label class="file-input-label">
                 🎵 タイマー用音源: 
-                <input type="file" accept="audio/*,video/*" onchange="handleTimerFileSelect(this)">
+                <label class="custom-file-btn">
+                    ファイルを選択
+                    <input type="file" accept="audio/*,video/*" name="example" onchange="handleFileSelect(${index}, this)">
+                </label>
+                <span id="timer-filename" class="file-name"></span>
             </label>
-            <span id="timer-filename" class="file-name"></span>
         </div>
     </div>
 <script>
