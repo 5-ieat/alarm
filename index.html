@@ -83,6 +83,24 @@
         .custom-file-btn:hover {
             background-color: #0056b3;
         }
+
+        .alarm-custom-file-btn input[type="file"] {
+            display: none;
+        }
+
+        .alarm-custom-file-btn {
+            display: inline-block;
+            padding: 5px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .alarm-custom-file-btn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -143,7 +161,7 @@
         <div style="margin-top: 10px;">
             <label class="file-input-label">
                 🎵 タイマー用音源: 
-                <label class="custom-file-btn">
+                <label class="alarm-custom-file-btn">
                     ファイルを選択
                     <input type="file" accept="audio/*,video/*" name="example" onchange="handleFileSelect(this)" style="display: none;">
                 </label>
