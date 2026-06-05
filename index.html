@@ -154,28 +154,28 @@
             <input type="number" min="0" max="59" value="0" style="font-size: 1rem; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; width: 50px; text-align: center;">
             <label for="color-select" style="font-size: 0.9rem;">分</label>
         </div>
-    </div>
-    <div class="timer-group" style="background: #fef3c7; border: 2px dashed #f59e0b; padding: 15px; border-radius: 12px; margin-top: 20px; text-align: left;">
-        <div class="alarm-header">
-            <span>⏳ タイマー（カウントダウン）</span>
-            <button id="timer-btn" onclick="toggleTimer()" style="background: #f59e0b; color: white; border: none; padding: 6px 15px; border-radius: 6px; font-weight: bold; cursor: pointer;">スタート</button>
-        </div>
+        <div class="timer-group" style="background: #fef3c7; border: 2px dashed #f59e0b; padding: 15px; border-radius: 12px; margin-top: 20px; text-align: left;">
+            <div class="alarm-header">
+                <span>⏳ タイマー（カウントダウン）</span>
+                <button id="timer-btn" onclick="toggleTimer()" style="background: #f59e0b; color: white; border: none; padding: 6px 15px; border-radius: 6px; font-weight: bold; cursor: pointer;">スタート</button>
+            </div>
     
-        <div class="time-inline" style="display: flex; align-items: center; gap: 5px; margin-top: 10px;">
-            <input type="number" id="timer-min" min="0" max="180" value="3" style="font-size: 1rem; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; width: 60px; text-align: center;"> 分
-            <input type="number" id="timer-sec" min="0" max="59" value="0" style="font-size: 1rem; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; width: 60px; text-align: center;"> 秒
-            <span id="timer-display" style="font-size: 1.2rem; font-weight: bold; color: #d97706; margin-left: auto; font-variant-numeric: tabular-nums;"></span>
-        </div>
+            <div class="time-inline" style="display: flex; align-items: center; gap: 5px; margin-top: 10px;">
+                <input type="number" id="timer-min" min="0" max="180" value="3" style="font-size: 1rem; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; width: 60px; text-align: center;"> 分
+                <input type="number" id="timer-sec" min="0" max="59" value="0" style="font-size: 1rem; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; width: 60px; text-align: center;"> 秒
+                <span id="timer-display" style="font-size: 1.2rem; font-weight: bold; color: #d97706; margin-left: auto; font-variant-numeric: tabular-nums;"></span>
+            </div>
     
-        <div style="margin-top: 10px;">
-            <label class="file-input-label">
-                🎵 タイマー用音源: 
-                <label class="alarm-custom-file-btn">
-                    ファイルを選択
-                    <input type="file" accept="audio/*,video/*" onchange="handleTimerFileSelect(this)">
+            <div style="margin-top: 10px;">
+                <label class="file-input-label">
+                    🎵 タイマー用音源: 
+                    <label class="alarm-custom-file-btn">
+                        ファイルを選択
+                        <input type="file" accept="audio/*,video/*" onchange="handleTimerFileSelect(this)">
+                    </label>
+                    <span id="timer-filename" class="file-name">未設定</span>
                 </label>
-                <span id="timer-filename" class="file-name">未設定</span>
-            </label>
+            </div>
         </div>
     </div>
 </div>
