@@ -16,16 +16,18 @@
         .container { max-width: 480px; margin: 0 auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         .clock { font-size: 3rem; font-weight: bold; font-variant-numeric: tabular-nums; margin-bottom: 25px; color: var(--primary-color); }
 
-        .weekday-group {max-width: 100%;         /* flex;はマックスサイズ*/
-        margin: 20px auto;        /* 画面の真ん中に配置 */
-        background-color: white;  /* 箱の背景を白にする */
-        border: 2px solid #cbd5e1;/* 薄いグレーの枠線をつける */
-        border-radius: 12px;      /* 角を丸くして柔らかい印象にする */
-        padding: 20px;            /* 箱の内側に適度な余白を作る */
-        background: #bcd7f5;
-        box-shadow: 0 4px 10px rgba(2,132,199,0.8); /* ほんのり影をつけて立体的に */
-        box-sizing: border-box;
-        text-align: center;
+        .weekday-group {
+            max-width: 100%;
+            margin: 20px auto;        
+            background-color: #bcd7f5;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;      
+            padding: 20px;            
+            box-shadow: 0 4px 10px rgba(2,132,199,0.8); 
+            box-sizing: border-box;
+            
+            /* 👇 ここにこの1行を追加します！ */
+            text-align: center;
         }
         
         /* アラームアイテム */
