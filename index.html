@@ -119,13 +119,11 @@
         /* ① PC向けの表示（デフォルト） */
         .sp-only { position: absolute; top: 50%; left: 50%; transform: translateX(-7.5%); width: 320px; border: 1px solid #cbd5e1; background: white; z-index: 100; display: flex; justify-content: space-around; padding: 8px 5px; Margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); box-sizing: border-box; border-radius: 4px; }
         .sp-only1 { font-size: 1.1rem; text-align: center; font-weight: 8px; padding-top: 15px; margin-right: 20px; }
-        .sp-only2 { font-size: 1.1rem; text-align: center; font-weight: 8px; padding-top: 15px; margin-right: 20px; }
     
         /* ② スマホ向けの表示（画面の横幅が768px以下の場合） */
         @media screen and (max-width: 768px) {
             .sp-only { position: absolute; top: 50%; left: 50%; transform: translateX(-22%); width: 320px; border: 1px solid #cbd5e1; background: white; z-index: 100; display: flex; justify-content: space-around; padding: 8px 5px; Margin-top: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); box-sizing: border-box; border-radius: 4px; }
             .sp-only1 { font-size: 1.1rem; text-align: center; font-weight: 8px; padding-top: 15px; }
-            .sp-only2 { font-size: 1.1rem; text-align: center; font-weight: 8px; padding-top: 15px; }
     </style>
 </head>
 <body>
@@ -167,10 +165,10 @@
                 </div>
      
     
-                <label for="color-select" style="font-size: 1.1rem; text-align: center; font-weight: 8px; padding-top: 15px; margin-right: 20px;">曜日</label>
+                <label for="color-select" class="sp-only1">曜日</label>
                 
                 <input type="number" min="0" max="23" value="21" style="font-size: 1rem; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin: 10px 0px 10px 0px; Padding: 0em 0px 0.75em 0px; width: 30px; text-align: center; padding-top: 10px;">
-                <label for="color-select" style="font-size: 1.1rem; text-align: center; font-weight: 8px; padding-top: 15px; margin-right: 20px;">時</label>
+                <label for="color-select" class="sp-only1">時</label>
     
                 <input type="number" min="0" max="59" value="0" style="font-size: 1rem; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin: 10px 0px 10px 0px; Padding: 0px 0px 0.75em 0px; width: 30px; text-align: center; padding-top: 10px;">
                 <label for="color-select" style="font-size: 1.1rem; text-align: center; font-weight: 8px; padding-top: 15px;">分</label>
