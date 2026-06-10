@@ -169,6 +169,17 @@
                 <label for="color-select" class="sp-only1">曜日</label>
                 
                 <input type="number" min="0" max="23" value="21" style="font-weight: bold; font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 6px; margin: 20px 0px 10px 0px; width: 32px; text-align: center; height: 15px; padding-top: 2px; padding-left: 17px; cursor: pointer;">
+                /* Chrome, Safari, Edge, Opera の矢印を消す */
+                input[type="number"]::-webkit-outer-spin-button,
+                input[type="number"]::-webkit-inner-spin-button {
+                    -webkit-appearance: none;
+                    margin: 0;
+                }
+
+                /* Firefox の矢印を消す */
+                input[type="number"] {
+                    -moz-appearance: textfield;
+                }
                 <label for="color-select" class="sp-only1">時</label>
     
                 <input type="number" min="0" max="59" value="0" style="font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 6px; margin: 10px 0px 10px 0px; width: 32px; text-align: center; height: 15px; padding-top: 2px; padding-left: 17px;">
