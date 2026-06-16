@@ -120,15 +120,15 @@
         .sp-only { position: absolute; top: 50%; left: 50%; transform: translateX(-2.3%); width: 320px; border: 1px solid #cbd5e1; background: white; z-index: 100; display: flex; justify-content: space-around; padding: 8px 5px; Margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); box-sizing: border-box; border-radius: 4px; }
         .sp-only1 { font-size: 1.1rem; text-align: center; font-weight: 8px; padding-top: 15px; margin-right: 80px; }
         .sp-only2 { background: white; border: 1px solid #cbd5e1; border-radius: 6px; margin: 17px 0px 1px 10px; width: 34px; height: 20px; cursor: pointer; }
-        .sp-only4 { font-weight: bold; font-size: 1.1rem; border: 1px solid #cbd5e1; border-radius: 6px; margin: 18px -10px 5px 1px; width: 20px; text-align: center; height: 16px; padding-top: 3px; cursor: pointer; }
-        .sp-only5 { margin: 0; font-weight: bold; font-size: 0.9rem; width: 100%; text-align: center; margin-bottom: 100px; }
+        .sp-only3 { font-weight: bold; font-size: 1.1rem; border: 1px solid #cbd5e1; border-radius: 6px; margin: 18px -10px 5px 1px; width: 20px; text-align: center; height: 16px; padding-top: 3px; cursor: pointer; }
+        .sp-only4 { margin: 0; font-weight: bold; font-size: 0.9rem; width: 100%; text-align: center; margin-bottom: 100px; }
         /* ② スマホ向けの表示（画面の横幅が768px以下の場合） */
         @media screen and (max-width: 768px) {
             .sp-only { transform: translateX(-16%); margin-top: 20px; }
             .sp-only1 { margin-right: 0; }
             .sp-only2 { margin: 14px 0px 1px 10px; height: 21px; padding-left: 1px; }
-            .sp-only4 { margin: 14px -10px 5px 1px; height: 9px; width: 19px; padding-top: 6px; }
-            .sp-only5 { margin-right: 20px; }
+            .sp-only3 { margin: 14px -10px 5px 1px; height: 9px; width: 19px; padding-top: 6px; }
+            .sp-only4 { margin-right: 20px; }
         }
         .no-spin::-webkit-outer-spin-button,
         .no-spin::-webkit-inner-spin-button {
@@ -154,7 +154,7 @@
     <button id="stop-alarm-btn" class="stop-btn" onclick="stopCurrentMedia()">🚨 アラームを停止</button>
          <div class="weekday-group">
             <div class="toggle-section">
-                <span class="sp-only5">アラームをかける通知の時間</span>
+                <span class="sp-only4">アラームをかける通知の時間</span>
                 <label class="switch">
                     <input type="checkbox" id="toggle-${index}" ${alarm.active ? 'checked' : ''} onchange="toggleAlarm(${index}, this.checked)">
                     <span class="slider2"></span>
@@ -182,10 +182,10 @@
     
                 <label for="color-select" class="sp-only1">曜日</label>
                 
-                <input type="number" min="0" max="23" value="21" class="no-spin sp-only4">
+                <input type="number" min="0" max="23" value="21" class="no-spin sp-only3">
                 <label for="color-select" class="sp-only1">時</label>
     
-                <input type="number" min="0" max="59" value="0" class="no-spin sp-only4">
+                <input type="number" min="0" max="59" value="0" class="no-spin sp-only3">
                 <label for="color-select" style="font-size: 1.1rem; text-align: center; font-weight: 8px; padding-top: 15px;">分</label>
             </div>
          </div>
