@@ -124,6 +124,7 @@
         .sp-only4 { margin: 0; font-weight: bold; font-size: 0.9rem; width: 100%; text-align: center; margin-bottom: 100px; margin-right: 20px; }
         .sp-only5 { align-items: center; padding-bottom: -10px; margin-bottom: 5px; justify-content: center; height: 30px; font-weight: bold; font-size: 1.5rem; list-style: none; }
         .sp-only6 { font-size: 1.9rem; text-align: center; font-weight: 8px; padding-top: 11px; }
+        .a { margin-left: 50px; }
         /* ② スマホ向けの表示（画面の横幅が768px以下の場合） */
         @media screen and (max-width: 768px) {
             .sp-only { transform: translateX(-16%); margin-top: 20px; }
@@ -133,6 +134,7 @@
             .sp-only4 { margin-right: 0; margin-left: 16px; }
             .sp-only5 { font-size: 1rem; }
             .sp-only6 { font-size: 1.1rem; padding-top: 15px; margin-left: -5px; }
+            .a {  }
         }
         .no-spin::-webkit-outer-spin-button,
         .no-spin::-webkit-inner-spin-button {
@@ -188,7 +190,7 @@
                 <input type="number" min="0" max="23" value="21" class="no-spin sp-only3">
                 <label for="color-select" class="sp-only1" style="margin-left: 0px;">時</label>
     
-                <input type="number" min="0" max="59" value="0" class="no-spin sp-only3" style="margin-left: 50px;">
+                <input type="number" min="0" max="59" value="0" class="no-spin sp-only3 a">
                 <label for="color-select" class="sp-only6">分</label>
             </div>
          </div>
