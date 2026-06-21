@@ -125,6 +125,7 @@
         .sp-only5 { align-items: center; height: 25px; margin-top: -4px; margin-right: -2px; justify-content: center; font-weight: bold; font-size: 1.5rem; list-style: none; }
         .sp-only6 { font-size: 1.9rem; text-align: center; font-weight: 8px; padding-top: 11px; }
         .a { margin-left: 50px; }
+        .b { margin-left: 0px; padding-top: 7px; }
         /* ② スマホ向けの表示（画面の横幅が768px以下の場合） */
         @media screen and (max-width: 768px) {
             .sp-only { transform: translateX(-16%); margin-top: 20px; }
@@ -135,6 +136,7 @@
             .sp-only5 { width: 30px; font-size: 1rem; margin-left: 0px; }
             .sp-only6 { font-size: 1.1rem; padding-top: 15px; margin-left: 0px; }
             .a {  }
+            .b {  }
         }
         .no-spin::-webkit-outer-spin-button,
         .no-spin::-webkit-inner-spin-button {
@@ -188,7 +190,7 @@
                 <label for="color-select" class="sp-only1">曜日</label>
                 
                 <input type="number" min="0" max="23" value="21" class="no-spin sp-only3">
-                <label for="color-select" class="sp-only1" style="margin-left: 0px; padding-top: 7px;">時</label>
+                <label for="color-select" class="sp-only1 b">時</label>
     
                 <input type="number" min="0" max="59" value="0" class="no-spin sp-only3 a">
                 <label for="color-select" class="sp-only6">分</label>
