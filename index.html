@@ -232,53 +232,7 @@
     </div>
 </div>
 <script>
-    // 音声のロックを解除する関数
-    function unlockAudio() {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const buffer = audioContext.createBuffer(1, 1, 22050);
-        const source = audioContext.createBufferSource();
-        source.buffer = buffer;
-        source.connect(audioContext.destination);
-        source.start(0);
-    }
-
-// toggleAlarm などのタップイベント時に実行する
-    function toggleAlarm(index, isChecked) {
-        if (isChecked) {
-            unlockAudio(); // 音声をアンロック
-            requestWakeLock(); // 画面スリープを防止
-        }
-    // ...既存の処理
-    }
-    // ★追加：ページが読み込まれた時に、環境を判定して<p>を追加する関数
-    function displayEnvironment() {
-        const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-        const isMobile = window.innerWidth <= 768; // 画面幅768px以下をスマホとみなす
-
-        const envContainer = document.getElementById('env-container');
-
-        // 条件に応じて文章と見た目を分ける
-        if (!isPWA && isMobile) {
-            const p = document.createElement('p');
-            p.className = 'env-badge';
-            p.textContent = '「ホーム画面に追加」で追加しないと使えないよ！';
-            p.style.background = '#c0c0c0';
-            p.style.color = '#000000';
-            envContainer.appendChild(p);
-        }
-    }
-
-    // ★追加：関数の実行を登録（既存のコードの邪魔をしない場所に置きます）
-    window.addEventListener('DOMContentLoaded', displayEnvironment);
-
-
-    // --- 以下、既存のアラーム処理コード（そのまま） ---
-    Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-            console.log('通知が許可されました！');
-        }
-    });
-
+    // --- グローバル変数・初期設定 ---
     let alarms = [
         { date: "", time: "", sec: "00", active: false, audioName: "未設定" },
         { date: "", time: "", sec: "00", active: false, audioName: "未設定" },
@@ -289,10 +243,30 @@
 
     let currentAudio = null; 
     let currentVideo = document.getElementById('alarm-video');
+    let loadedAudios = {}; // ★追加：アンロック済みの Audio を保持するオブジェクト
+    let wakeLock = null;   // ★追加：画面スリープ防止用
 
     const DB_NAME = "AlarmMediaDB";
     const STORE_NAME = "mediaFiles";
 
+    // --- 画面スリープ防止（Wake Lock） ---
+    async function requestWakeLock() {
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLock = await navigator.wakeLock.request('screen');
+            }
+        } catch (err) {
+            console.error("Wake Lockエラー:", err);
+        }
+    }
+
+    document.addEventListener('visibilitychange', async () => {
+        if (wakeLock !== null && document.visibilityState === 'visible') {
+            await requestWakeLock();
+        }
+    });
+
+    // --- IndexedDB 関連関数 ---
     function openDB() {
         return new Promise((resolve, reject) => {
             const request = indexedDB.open(DB_NAME, 1);
@@ -334,13 +308,35 @@
         });
     }
 
+    // --- 環境表示・初期化 ---
+    function displayEnvironment() {
+        const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        const isMobile = window.innerWidth <= 768;
+        const envContainer = document.getElementById('env-container');
+
+        if (!isPWA && isMobile) {
+            const p = document.createElement('p');
+            p.className = 'env-badge';
+            p.textContent = '「ホーム画面に追加」で追加しないと使えないよ！';
+            p.style.background = '#c0c0c0';
+            p.style.color = '#000000';
+            envContainer.appendChild(p);
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', displayEnvironment);
+
+    if (Notification.permission !== 'granted') {
+        Notification.requestPermission();
+    }
+
     if (localStorage.getItem('pwa_alarms')) {
         const saved = JSON.parse(localStorage.getItem('pwa_alarms'));
         alarms = alarms.map((alarm, i) => saved[i] ? { ...alarm, ...saved[i], active: false } : alarm);
     }
 
+    // --- DOM生成 ---
     const alarmListContainer = document.getElementById('alarm-list');
-    
     alarms.forEach((alarm, index) => {
         const item = document.createElement('div');
         item.className = 'alarm-item';
@@ -397,7 +393,8 @@
         await saveMediaToDB(index, file);
     }
 
-    function toggleAlarm(index, isChecked) {
+    // ★修正：トグルONの瞬間に音声プリロード＆アンロックとスリープ防止を実行
+    async function toggleAlarm(index, isChecked) {
         if (isChecked && !alarms[index].time) {
             alert("「時間」は必ず設定してください。");
             document.getElementById(`toggle-${index}`).checked = false;
@@ -407,22 +404,39 @@
         saveToStorage();
 
         if (isChecked) {
-            const context = new (window.AudioContext || window.webkitAudioContext)();
-            if (context.state === 'suspended') context.resume();
+            requestWakeLock(); // 画面スリープを防止
+
+            // タップ時の文脈（User Gesture）を利用して音声をアンロック＆保持
+            try {
+                const fileBlob = await getMediaFromDB(index);
+                if (fileBlob) {
+                    const mediaUrl = URL.createObjectURL(fileBlob);
+                    const audio = new Audio(mediaUrl);
+                    audio.loop = true;
+                    
+                    // 一瞬再生してすぐ停止（ブラウザの制限解除）
+                    await audio.play();
+                    audio.pause();
+                    audio.currentTime = 0;
+                    loadedAudios[index] = audio;
+                }
+            } catch (e) {
+                console.warn("音声の事前ロードに失敗（ファイル未選択など）:", e);
+            }
+        } else {
+            delete loadedAudios[index];
         }
     }
 
     function saveToStorage() {
         localStorage.setItem('pwa_alarms', JSON.stringify(alarms));
     }
-// ==========================================
-// ★ 追加：タイマー（カウントダウン）用ロジック
-// ==========================================
-    let timerEndTime = null; // タイマーが終了する未来の時刻（ミリ秒）
-    let timerIntervalId = null; // カウントダウン表示用のインターバルID
+
+    // --- タイマー処理 ---
+    let timerEndTime = null;
+    let timerIntervalId = null;
     let timerAudioName = "未設定";
 
-    // ページ読み込み時にタイマー音源の名前だけ復元
     window.addEventListener('DOMContentLoaded', () => {
         if (localStorage.getItem('pwa_timer_audio_name')) {
             timerAudioName = localStorage.getItem('pwa_timer_audio_name');
@@ -430,7 +444,6 @@
         }
     });
 
-// タイマー用ファイル選択
     async function handleTimerFileSelect(input) {
         const file = input.files[0];
         if (!file) return;
@@ -438,16 +451,13 @@
         timerAudioName = file.name;
         document.getElementById('timer-filename').innerText = file.name;
         localStorage.setItem('pwa_timer_audio_name', file.name);
-        // IndexedDBのキー「media_timer」に保存
         await saveMediaToDB('timer', file);
     }
 
-// タイマーの開始・停止切り替え
-    function toggleTimer() {
+    async function toggleTimer() {
         const btn = document.getElementById('timer-btn');
         const display = document.getElementById('timer-display');
 
-    // すでに動いている場合は「キャンセル（停止）」
         if (timerIntervalId) {
             clearInterval(timerIntervalId);
             timerIntervalId = null;
@@ -455,10 +465,10 @@
             btn.innerText = "スタート";
             btn.style.background = "#f59e0b";
             display.innerText = "";
+            delete loadedAudios['timer'];
             return;
         }
 
-    // 入力値の取得
         const min = parseInt(document.getElementById('timer-min').value, 10) || 0;
         const sec = parseInt(document.getElementById('timer-sec').value, 10) || 0;
         const totalMs = ((min * 60) + sec) * 1000;
@@ -468,21 +478,32 @@
             return;
         }
 
-    // iOS/Android対策：ユーザー操作をトリガーにAudioContextを解放
-        const context = new (window.AudioContext || window.webkitAudioContext)();
-        if (context.state === 'suspended') context.resume();
+        requestWakeLock();
 
-    // 現在時刻に設定時間を足して「終了時刻」を固定する
+        // タイマー用音源のアンロック処理
+        try {
+            const fileBlob = await getMediaFromDB('timer');
+            if (fileBlob) {
+                const mediaUrl = URL.createObjectURL(fileBlob);
+                const audio = new Audio(mediaUrl);
+                audio.loop = true;
+                await audio.play();
+                audio.pause();
+                audio.currentTime = 0;
+                loadedAudios['timer'] = audio;
+            }
+        } catch (e) {
+            console.warn("タイマー音源の事前ロード失敗:", e);
+        }
+
         timerEndTime = Date.now() + totalMs;
         btn.innerText = "キャンセル";
         btn.style.background = "#64748b";
 
-    // 画面のカウントダウン表示を更新するループ（ミリ秒単位で正確に計算）
         timerIntervalId = setInterval(() => {
             const remainingMs = timerEndTime - Date.now();
 
             if (remainingMs <= 0) {
-            // タイマー終了時の処理
                 clearInterval(timerIntervalId);
                 timerIntervalId = null;
                 timerEndTime = null;
@@ -490,17 +511,43 @@
                 btn.style.background = "#f59e0b";
                 display.innerText = "タイムアップ！";
 
-            // アラーム鳴動処理を呼び出す（引数に 'timer' を指定）
-                triggerAlarmNotification(`⏳ タイマー終了`, 'timer');
+                playPreparedAudio('timer', "⏳ タイマー終了");
             } else {
-            // 残り時間の表示更新
                 const rMin = Math.floor(remainingMs / 1000 / 60);
                 const rSec = Math.floor((remainingMs / 1000) % 60);
                 display.innerText = `残り ${String(rMin).padStart(2, '0')}:${String(rSec).padStart(2, '0')}`;
             }
-        }, 250); // 画面更新は0.25秒ごと
+        }, 250);
     }
-    
+
+    // 共通再生処理（事前アンロック済みを使用）
+    function playPreparedAudio(key, titleText) {
+        stopCurrentMedia();
+
+        if (Notification.permission === 'granted') {
+            navigator.serviceWorker.ready.then(registration => {
+                registration.showNotification(titleText, {
+                    body: `時間が来ました！アプリを開いて停止してください。`,
+                    icon: 'icon-192.png',
+                    tag: 'alarm-notification',
+                    renotify: true
+                });
+            });
+        }
+
+        if (loadedAudios[key]) {
+            currentAudio = loadedAudios[key];
+            currentAudio.play().catch(err => {
+                console.error("再生エラー:", err);
+                alert(`${titleText} の時間です！\n(画面をタップしてください)`);
+            });
+            document.getElementById('stop-alarm-btn').style.display = 'block';
+            delete loadedAudios[key];
+        } else {
+            alert(`${titleText} の時間です！(音源が準備できていません)`);
+        }
+    }
+
     function stopCurrentMedia() {
         if (currentAudio) {
             currentAudio.pause();
@@ -515,6 +562,7 @@
         document.getElementById('stop-alarm-btn').style.display = 'none';
     }
 
+    // ★修正：メインのアラームチェック判定ループ
     setInterval(async () => {
         const now = new Date();
         const yyyy = now.getFullYear();
@@ -545,32 +593,8 @@
                 alarm.active = false;
                 saveToStorage();
 
-                if (Notification.permission === 'granted') {
-                    navigator.serviceWorker.ready.then(registration => {
-                        registration.showNotification(`⏰ アラーム ${index + 1}`, {
-                            body: `アラームです！アプリを開いてアラームを消しよう！`,
-                            icon: 'icon-192.png',
-                            tag: 'alarm-notification',
-                            renotify: true
-                        });
-                    });
-                }
-
-                const fileBlob = await getMediaFromDB(index);
-
-                if (fileBlob) {
-                    stopCurrentMedia();
-                    const mediaUrl = URL.createObjectURL(fileBlob);
-                    currentAudio = new Audio(mediaUrl);
-                    currentAudio.loop = true;
-                    currentAudio.play().catch(err => {
-                        console.error("再生制限: ", err);
-                        alert(`⏰ アラーム ${index + 1} の時間です！\n(※画面をタップすると音が鳴ります)`);
-                    });
-                    document.getElementById('stop-alarm-btn').style.display = 'block';
-                } else {
-                    alert(`⏰ アラーム ${index + 1} の時間です！(ファイルが見つかりません)`);
-                }
+                // 事前にロード・アンロックしておいた音声で鳴動させる
+                playPreparedAudio(index, `⏰ アラーム ${index + 1}`);
             }
         }
     }, 1000);
