@@ -560,6 +560,7 @@
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch(err => console.error(err));
     }
+    
     // 音声のロックを解除する関数
     function unlockAudio() {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
