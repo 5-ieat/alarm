@@ -560,6 +560,24 @@
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch(err => console.error(err));
     }
+    // 音声のロックを解除する関数
+    function unlockAudio() {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const buffer = audioContext.createBuffer(1, 1, 22050);
+        const source = audioContext.createBufferSource();
+        source.buffer = buffer;
+        source.connect(audioContext.destination);
+        source.start(0);
+    }
+
+// toggleAlarm などのタップイベント時に実行する
+    function toggleAlarm(index, isChecked) {
+        if (isChecked) {
+            unlockAudio(); // 音声をアンロック
+            requestWakeLock(); // 画面スリープを防止
+        }
+    // ...既存の処理
+    }
 </script>
 </body>
 </html>
