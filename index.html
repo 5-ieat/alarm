@@ -513,7 +513,13 @@
             if (fileBlob) {
                 const mediaUrl = URL.createObjectURL(fileBlob);
                 const audio = new Audio(mediaUrl);
-                audio.loop = true;
+                audio.loop = true;                   
+                audio.volume = 0;
+                await audio.play();
+                audio.pause();
+                audio.currentTime = 0;              
+                audio.volume = 1.0;
+                loadedAudios[index] = audio;
                 await audio.play();
                 audio.pause();
                 audio.currentTime = 0;
