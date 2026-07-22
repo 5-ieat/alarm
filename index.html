@@ -223,7 +223,7 @@
                     🎵 タイマー用音源: 
                     <label class="alarm-custom-file-btn">
                         ファイルを選択
-                        <input type="file" accept="audio/*,video/*" onchange="handleTimerFileSelect(this)">
+                        <input type="file" accept="audio/*,video/*,.m4a,.mp3,.aac,.wav,audio/m4a,audio/x-m4a,audio/mp4" name="example" onchange="handleFileSelect(${index}, this)" onchange="handleTimerFileSelect(this)">
                     </label>
                     <span id="timer-filename" class="file-name">未設定</span>
                 </label>
@@ -359,7 +359,7 @@
                     🎵 音源/動画: 
                     <label class="custom-file-btn">
                         ファイルを選択
-                        <input type="file" accept="audio/*,video/*" name="example" onchange="handleFileSelect(${index}, this)">
+                        <input type="file" accept="audio/*,video/*,.m4a,.mp3,.aac,.wav,audio/m4a,audio/x-m4a,audio/mp4" name="example" onchange="handleFileSelect(${index}, this)" name="example" onchange="handleFileSelect(${index}, this)">
                     </label>
                     <span id="filename-${index}" class="file-name">${alarm.audioName}</span>
                 </label>
