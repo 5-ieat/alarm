@@ -414,6 +414,14 @@
                     const audio = new Audio(mediaUrl);
                     audio.loop = true;
                     
+                    audio.volume = 0;
+                    await audio.play();
+                    audio.pause();
+                    audio.currentTime = 0;
+                    
+                    audio.volume = 1.0;
+                    loadedAudios[index] = audio;
+                    
                     // 一瞬再生してすぐ停止（ブラウザの制限解除）
                     await audio.play();
                     audio.pause();
