@@ -246,6 +246,25 @@
     let loadedAudios = {}; // ★追加：アンロック済みの Audio を保持するオブジェクト
     let wakeLock = null;   // ★追加：画面スリープ防止用
 
+    // アラームやタイマーが有効になったら画面消灯を防止
+    async function requestWakeLock() {
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLock = await navigator.wakeLock.request('screen');
+                console.log('画面のスリープ防止を有効化しました');
+            }
+        } catch (err) {
+            console.error('Wake Lockエラー:', err);
+        }
+    }
+
+// 画面が再度表示されたときに再取得（タブ切り替え対策）
+    document.addEventListener('visibilitychange', async () => {
+        if (wakeLock !== null && document.visibilityState === 'visible') {
+            await requestWakeLock();
+        }
+    });
+
     const DB_NAME = "AlarmMediaDB";
     const STORE_NAME = "mediaFiles";
 
