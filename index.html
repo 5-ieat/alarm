@@ -439,13 +439,13 @@
                     audio.currentTime = 0;
                     
                     audio.volume = 1.0;
-                    loadedAudios[index] = audio;
+                    loadedAudios[index] = timer;
                     
                     // 一瞬再生してすぐ停止（ブラウザの制限解除）
                     await audio.play();
                     audio.pause();
                     audio.currentTime = 0;
-                    loadedAudios[index] = audio;
+                    loadedAudios[index] = timer;
                 }
             } catch (e) {
                 console.warn("音声の事前ロードに失敗（ファイル未選択など）:", e);
