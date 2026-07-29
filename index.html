@@ -439,13 +439,13 @@
                     audio.currentTime = 0;
                     
                     audio.volume = 1.0;
-                    loadedAudios[index] = timer;
+                    loadedAudios[index] = audio;
                     
                     // 一瞬再生してすぐ停止（ブラウザの制限解除）
                     await audio.play();
                     audio.pause();
                     audio.currentTime = 0;
-                    loadedAudios[index] = timer;
+                    loadedAudios[index] = audio;
                 }
             } catch (e) {
                 console.warn("音声の事前ロードに失敗（ファイル未選択など）:", e);
@@ -519,11 +519,11 @@
                 audio.pause();
                 audio.currentTime = 0;              
                 audio.volume = 1.0;
-                loadedAudios[index] = audio;
+                loadedAudios[index] = timer;
                 await audio.play();
                 audio.pause();
                 audio.currentTime = 0;
-                loadedAudios['timer'] = audio;
+                loadedAudios['timer'] = timer;
             }
         } catch (e) {
             console.warn("タイマー音源の事前ロード失敗:", e);
