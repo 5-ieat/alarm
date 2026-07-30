@@ -645,11 +645,11 @@
         const currentSec = now.getSeconds();     // 現在の秒 (0-59)
 
     // 1. 画面から設定値を取得
-        const hourInput = parseInt(document.getElementById('alarm-hour').value, 10);
-        const minInput = parseInt(document.getElementById('alarm-min').value, 10);
+        const hourInput = parseInt(document.getElementById('zi').value, 10);
+        const minInput = parseInt(document.getElementById('hunn').value, 10);
     
     // チェックされている曜日の配列を取得
-        const checkedYoubi = Array.from(document.querySelectorAll('.youbi-checkbox:checked'))
+        const checkedYoubi = Array.from(document.querySelectorAll('.youbi:checked'))
                               .map(cb => cb.value);
 
     // 2. 曜日が一致しているか、または曜日が一つも選択されていない場合の判定
