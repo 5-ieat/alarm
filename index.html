@@ -636,6 +636,31 @@
     }
     // ここから下は曜日とかの通知について
     const dayMap = ["Sun", "Mon", "Tues", "Wednes", "Thurs", "Fri", "Satur"];
+    
+    function checkCustomAlarm() {
+        const now = new Date();
+        const currentDay = dayMap[now.getDay()]; // 現在の曜日 ("Sun", "Mon" など)
+        const currentHour = now.getHours();      // 現在の時 (0-23)
+        const currentMin = now.getMinutes();     // 現在の分 (0-59)
+        const currentSec = now.getSeconds();     // 現在の秒 (0-59)
+
+    // 1. 画面から設定値を取得
+        const hourInput = parseInt(document.getElementById('alarm-hour').value, 10);
+        const minInput = parseInt(document.getElementById('alarm-min').value, 10);
+    
+    // チェックされている曜日の配列を取得
+        const checkedYoubi = Array.from(document.querySelectorAll('.youbi-checkbox:checked'))
+                              .map(cb => cb.value);
+
+    // 2. 曜日が一致しているか、または曜日が一つも選択されていない場合の判定
+    // （※必要に応じて「曜日未選択時は毎日鳴らす」などの仕様に変更可能です）
+        const isDayMatched = checkedYoubi.length === 0 || checkedYoubi.includes(currentDay);
+
+    // 3. 時・分・秒（0秒のタイミング）が一致したか判定
+        if (isDayMatched && currentHour === hourInput && currentMin === minInput && currentSec === 0) {
+            triggerAlarm();
+        }
+    }
 </script>
 </body>
 </html>
