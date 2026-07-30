@@ -634,6 +634,8 @@
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch(err => console.error(err));
     }
+    // ここから下は曜日とかの通知について
+    const dayMap = ["Sun", "Mon", "Tues", "Wednes", "Thurs", "Fri", "Satur"];
 </script>
 </body>
 </html>
