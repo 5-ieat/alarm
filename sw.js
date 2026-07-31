@@ -29,8 +29,10 @@ self.addEventListener('push', function(event) {
     // 通知の表示設定
     const title = "⏰ アラームの時間です！";
     const options = {
-        body: "画面をタップしてアラームを停止してください。",
+        body: "アラームを設定する時間になったよ！画面をタップしてアラームを設定やりましょう！",
         icon: "icon.png",
+        badge: "badge.png",
+        vibrate: [200, 100, 200],
         tag: "pwa-alarm", // 重複を防ぐためのタグ
         renotify: true,
         requireInteraction: true // ユーザーが消すまで通知を出しっぱなしにする
