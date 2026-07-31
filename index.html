@@ -663,8 +663,18 @@
     }
     
     function triggerAlarm() {
-        
-    }
+        if (Notification.permission === "granted") {
+            const title = "⏰ アラームの時間です！";
+            const options = {
+                body: "設定した時間になりました。",
+                icon: "icon.png",
+                vibrate: [200, 100, 200],
+                requireInteraction: true
+            };
+
+            // 画面（フォアグラウンド）から直接通知を表示する
+            new Notification(title, options);
+        }
     setInterval(checkCustomAlarm, 1000);
 </script>
 </body>
