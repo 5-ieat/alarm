@@ -676,6 +676,19 @@
     }
     
     setInterval(checkCustomAlarm, 1000);
+    function saveCustomAlarmConfig() {
+    const zi = document.getElementById('zi').value;
+    const hunn = document.getElementById('hunn').value;
+    const checkedYoubi = Array.from(document.querySelectorAll('.youbi:checked')).map(cb => cb.value);
+
+    const config = {
+        active: customAlarmActive,
+        zi: zi,
+        hunn: hunn,
+        youbi: checkedYoubi
+    };
+    localStorage.setItem('pwa_custom_alarm_config', JSON.stringify(config));
+}
 </script>
 </body>
 </html>
