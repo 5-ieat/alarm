@@ -183,13 +183,13 @@
                     <summary class="sp-only5">曜日</summary>
                     <div class="parent-box">
                         <div class="sp-only">
-                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Sun" class="youbi">日</label>
-                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Mon" class="youbi">月</label>
-                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Tues" class="youbi">火</label>
-                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Wednes" class="youbi">水</label>
-                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Thurs" class="youbi">木</label>
-                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Fri" class="youbi">金</label>
-                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Satur" class="youbi">土</label>
+                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Sun" class="youbi" onchange="saveCustomAlarmConfig()">日</label>
+                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Mon" class="youbi" onchange="saveCustomAlarmConfig()">月</label>
+                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Tues" class="youbi" onchange="saveCustomAlarmConfig()">火</label>
+                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Wednes" class="youbi" onchange="saveCustomAlarmConfig()">水</label>
+                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Thurs" class="youbi" onchange="saveCustomAlarmConfig()">木</label>
+                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Fri" class="youbi" onchange="saveCustomAlarmConfig()">金</label>
+                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Satur" class="youbi"onchange="saveCustomAlarmConfig()">土</label>
                         </div>
                     </div>
                 </details>
@@ -197,10 +197,10 @@
      
             <label for="color-select" class="sp-only1 c">曜日</label>
                 
-            <input type="number" id="zi" min="0" max="23" value="21" class="no-spin sp-only3">
+            <input type="number" id="zi" min="0" max="23" value="21" class="no-spin sp-only3" onchange="saveCustomAlarmConfig()">
             <label for="color-select" class="sp-only1 b">時</label>
     
-            <input type="number" id="hunn" min="0" max="59" value="0" class="no-spin sp-only3 a">
+            <input type="number" id="hunn" min="0" max="59" value="0" class="no-spin sp-only3 a" onchange="saveCustomAlarmConfig()">
             <label for="color-select" class="sp-only6">分</label>
         </div>
     </div>
