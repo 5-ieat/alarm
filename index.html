@@ -169,65 +169,64 @@
     
     <video id="alarm-video" style="display: none;" playsinline webpack-playsinline></video>
     <button id="stop-alarm-btn" class="stop-btn" onclick="stopCurrentMedia()">🚨 アラームを停止</button>
-         <div class="weekday-group">
-            <div class="toggle-section">
-                <span class="sp-only4">アラームをかける通知の時間</span>
-                <label class="switch">
-                    <input type="checkbox" id="toggle-${index}" ${alarm.active ? 'checked' : ''} onchange="toggleAlarm(${index}, this.checked)">
-                    <span class="slider2"></span>
-                </label>
-            </div>
+    <div class="weekday-group">
+        <div class="toggle-section">
+            <span class="sp-only4">アラームをかける通知の時間</span>
+            <label class="switch">
+                <input type="checkbox" id="toggle-${index}" ${alarm.active ? 'checked' : ''} onchange="toggleAlarm(${index}, this.checked)">
+                <span class="slider2"></span>
+            </label>
+        </div>
              
-            <div style="display: flex; text-align: center; flex-wrap: wrap;">
-                <div class="custom-select" style="position: relative; width: 36px; margin-left: 20px;">
-                    <details class="sp-only2">
-                        <summary class="sp-only5">曜日</summary>
-                        <div class="parent-box">
-                            <div class="sp-only">
-                                <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Sun" class="youbi">日</label>
-                                <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Mon" class="youbi>月</label>
-                                <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Tues" class="youbi>火</label>
-                                <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Wednes" class="youbi>水</label>
-                                <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Thurs" class="youbi>木</label>
-                                <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Fri" class="youbi>金</label>
-                                <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Satur" class="youbi>土</label>
-                            </div>
+        <div style="display: flex; text-align: center; flex-wrap: wrap;">
+            <div class="custom-select" style="position: relative; width: 36px; margin-left: 20px;">
+                <details class="sp-only2">
+                    <summary class="sp-only5">曜日</summary>
+                    <div class="parent-box">
+                        <div class="sp-only">
+                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Sun" class="youbi">日</label>
+                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Mon" class="youbi>月</label>
+                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Tues" class="youbi>火</label>
+                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Wednes" class="youbi>水</label>
+                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Thurs" class="youbi>木</label>
+                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Fri" class="youbi>金</label>
+                            <label style="cursor: pointer; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px;"><input type="checkbox" name="youbi" value="Satur" class="youbi>土</label>
                         </div>
-                    </details>
-                </div>
+                    </div>
+                </details>
+            </div>
      
-    
-                <label for="color-select" class="sp-only1 c">曜日</label>
+            <label for="color-select" class="sp-only1 c">曜日</label>
                 
-                <input type="number" id="zi" min="0" max="23" value="21" class="no-spin sp-only3">
-                <label for="color-select" class="sp-only1 b">時</label>
+            <input type="number" id="zi" min="0" max="23" value="21" class="no-spin sp-only3">
+            <label for="color-select" class="sp-only1 b">時</label>
     
-                <input type="number" id="hunn" min="0" max="59" value="0" class="no-spin sp-only3 a">
-                <label for="color-select" class="sp-only6">分</label>
-            </div>
-         </div>
-        <div class="timer-group" style="background: #fef3c7; border: 2px dashed #f59e0b; padding: 15px; border-radius: 12px; margin-top: 20px; text-align: left;">
-            <div class="alarm-header">
-                <span>⏳ タイマー（カウントダウン）</span>
-                <button id="timer-btn" onclick="toggleTimer()" style="background: #f59e0b; color: white; border: none; padding: 6px 15px; border-radius: 6px; font-weight: bold; cursor: pointer;">スタート</button>
-            </div>
+            <input type="number" id="hunn" min="0" max="59" value="0" class="no-spin sp-only3 a">
+            <label for="color-select" class="sp-only6">分</label>
+        </div>
+    </div>
+        
+    <div class="timer-group" style="background: #fef3c7; border: 2px dashed #f59e0b; padding: 15px; border-radius: 12px; margin-top: 20px; text-align: left;">
+        <div class="alarm-header">
+            <span>⏳ タイマー（カウントダウン）</span>
+            <button id="timer-btn" onclick="toggleTimer()" style="background: #f59e0b; color: white; border: none; padding: 6px 15px; border-radius: 6px; font-weight: bold; cursor: pointer;">スタート</button>
+        </div>
     
-            <div class="time-inline" style="display: flex; align-items: center; gap: 5px; margin-top: 10px;">
-                <input type="number" id="timer-min" min="0" max="180" value="3" style="font-size: 1rem; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; width: 60px; text-align: center;"> 分
-                <input type="number" id="timer-sec" min="0" max="59" value="0" style="font-size: 1rem; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; width: 60px; text-align: center;"> 秒
-                <span id="timer-display" style="font-size: 1.2rem; font-weight: bold; color: #d97706; margin-left: auto; font-variant-numeric: tabular-nums;"></span>
-            </div>
+        <div class="time-inline" style="display: flex; align-items: center; gap: 5px; margin-top: 10px;">
+            <input type="number" id="timer-min" min="0" max="180" value="3" style="font-size: 1rem; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; width: 60px; text-align: center;"> 分
+            <input type="number" id="timer-sec" min="0" max="59" value="0" style="font-size: 1rem; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; width: 60px; text-align: center;"> 秒
+            <span id="timer-display" style="font-size: 1.2rem; font-weight: bold; color: #d97706; margin-left: auto; font-variant-numeric: tabular-nums;"></span>
+        </div>
     
-            <div style="margin-top: 10px;">
-                <label class="file-input-label">
-                    🎵 タイマー用音源: 
-                    <label class="alarm-custom-file-btn">
-                        ファイルを選択
-                        <input type="file" accept="audio/*,video/*,.m4a,.mp3,.aac,.wav,audio/m4a,audio/x-m4a,audio/mp4" name="example" onchange="handleFileSelect(${index}, this)" onchange="handleTimerFileSelect(this)">
-                    </label>
-                    <span id="timer-filename" class="file-name">未設定</span>
+        <div style="margin-top: 10px;">
+            <label class="file-input-label">
+                🎵 タイマー用音源: 
+                <label class="alarm-custom-file-btn">
+                    ファイルを選択
+                    <input type="file" accept="audio/*,video/*,.m4a,.mp3,.aac,.wav,audio/m4a,audio/x-m4a,audio/mp4" name="example" onchange="handleFileSelect(${index}, this)" onchange="handleTimerFileSelect(this)">
                 </label>
-            </div>
+                <span id="timer-filename" class="file-name">未設定</span>
+            </label>
         </div>
     </div>
 </div>
