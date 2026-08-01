@@ -160,7 +160,7 @@
 <body>
 
 <div class="container">
-    <div class="clock" id="clock">0000/00/00 00:00:00</div>
+    <div class="clock" id="clock">0000/00/00 (曜日) 00:00:00</div>
     
     <div id="env-container"></div>
 
@@ -599,6 +599,9 @@
         const yyyy = now.getFullYear();
         const mm = String(now.getMonth() + 1).padStart(2, '0');
         const dd = String(now.getDate()).padStart(2, '0');
+        const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        const dayIndex = now.getDay();
+        const cw = weekdays[dayIndex];
         const hh = String(now.getHours()).padStart(2, '0');
         const min = String(now.getMinutes()).padStart(2, '0');
         const ss = String(now.getSeconds()).padStart(2, '0');
@@ -606,7 +609,7 @@
         const currentDateStr = `${yyyy}-${mm}-${dd}`;
         const currentTimeStr = `${hh}:${min}:${ss}`;
 
-        document.getElementById('clock').innerText = `${yyyy}/${mm}/${dd} ${hh}:${min}:${ss}`;
+        document.getElementById('clock').innerText = `${yyyy}/${mm}/${dd} ${cw} ${hh}:${min}:${ss}`;
 
         for (let index = 0; index < alarms.length; index++) {
             const alarm = alarms[index];
