@@ -243,6 +243,7 @@
     let currentVideo = document.getElementById('alarm-video');
     let loadedAudios = {}; // ★追加：アンロック済みの Audio を保持するオブジェクト
     let wakeLock = null;   // ★追加：画面スリープ防止用
+    let customAlarmActive = false;
 
     // アラームやタイマーが有効になったら画面消灯を防止
     async function requestWakeLock() {
@@ -636,6 +637,7 @@
     const dayMap = ["Sun", "Mon", "Tues", "Wednes", "Thurs", "Fri", "Satur"];
     
     function checkCustomAlarm() {
+        if (!customAlarmActive) return;
         const now = new Date();
         const currentDay = dayMap[now.getDay()]; // 現在の曜日 ("Sun", "Mon" など)
         const currentHour = now.getHours();      // 現在の時 (0-23)
@@ -676,49 +678,50 @@
     }
     
     setInterval(checkCustomAlarm, 1000);
+    
     function saveCustomAlarmConfig() {
-    const zi = document.getElementById('zi').value;
-    const hunn = document.getElementById('hunn').value;
-    const checkedYoubi = Array.from(document.querySelectorAll('.youbi:checked')).map(cb => cb.value);
+        const zi = document.getElementById('zi').value;
+        const hunn = document.getElementById('hunn').value;
+        const checkedYoubi = Array.from(document.querySelectorAll('.youbi:checked')).map(cb => cb.value);
 
-    const config = {
-        active: customAlarmActive,
-        zi: zi,
-        hunn: hunn,
-        youbi: checkedYoubi
-    };
-    localStorage.setItem('pwa_custom_alarm_config', JSON.stringify(config));
-}
+        const config = {
+            active: customAlarmActive,
+            zi: zi,
+            hunn: hunn,
+            youbi: checkedYoubi
+        };
+        localStorage.setItem('pwa_custom_alarm_config', JSON.stringify(config));
+    }
     function loadCustomAlarmConfig() {
-    const saved = localStorage.getItem('pwa_custom_alarm_config');
-    if (!saved) return;
+        const saved = localStorage.getItem('pwa_custom_alarm_config');
+        if (!saved) return;
 
-    try {
-        const config = JSON.parse(saved);
+        try {
+            const config = JSON.parse(saved);
         
-        // トグルスイッチの状態復元
-        customAlarmActive = config.active || false;
-        document.getElementById('toggle-custom').checked = customAlarmActive;
+            // トグルスイッチの状態復元
+            customAlarmActive = config.active || false;
+            document.getElementById('toggle-custom').checked = customAlarmActive;
 
-        // 時・分の復元
-        if (config.zi !== undefined) document.getElementById('zi').value = config.zi;
-        if (config.hunn !== undefined) document.getElementById('hunn').value = config.hunn;
+            // 時・分の復元
+            if (config.zi !== undefined) document.getElementById('zi').value = config.zi;
+            if (config.hunn !== undefined) document.getElementById('hunn').value = config.hunn;
 
-        // 曜日のチェック状態復元
-        if (config.youbi && Array.isArray(config.youbi)) {
+            // 曜日のチェック状態復元
+            if (config.youbi && Array.isArray(config.youbi)) {
             document.querySelectorAll('.youbi').forEach(cb => {
                 cb.checked = config.youbi.includes(cb.value);
-            });
+                });
+            }
+        } catch (e) {
+            console.error("カスタムアラーム設定の読み込みエラー:", e);
         }
-    } catch (e) {
-        console.error("カスタムアラーム設定の読み込みエラー:", e);
     }
-}
 
-// ページ読み込み時に実行
-window.addEventListener('DOMContentLoaded', () => {
-    loadCustomAlarmConfig();
-});
+    // ページ読み込み時に実行
+    window.addEventListener('DOMContentLoaded', () => {
+        loadCustomAlarmConfig();
+    });
 </script>
 </body>
 </html>
