@@ -599,7 +599,7 @@
         const yyyy = now.getFullYear();
         const mm = String(now.getMonth() + 1).padStart(2, '0');
         const dd = String(now.getDate()).padStart(2, '0');
-        const weekdays = ['(日)', '(月)', '(火)', '(水)', '(木)', '(金)', '(土)'];
+        const weekdays = [' (日) ', ' (月) ', ' (火) ', ' (水) ', ' (木) ', ' (金) ', ' (土) '];
         const dayIndex = now.getDay();
         const cw = weekdays[dayIndex];
         const hh = String(now.getHours()).padStart(2, '0');
@@ -609,7 +609,7 @@
         const currentDateStr = `${yyyy}-${mm}-${dd}`;
         const currentTimeStr = `${hh}:${min}:${ss}`;
 
-        document.getElementById('clock').innerText = `${yyyy}/${mm}/${dd}$${cw}$${hh}:${min}:${ss}`;
+        document.getElementById('clock').innerText = `${yyyy}/${mm}/${dd}${cw}${hh}:${min}:${ss}`;
 
         for (let index = 0; index < alarms.length; index++) {
             const alarm = alarms[index];
