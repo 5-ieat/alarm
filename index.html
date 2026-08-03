@@ -418,6 +418,14 @@
         saveToStorage();
         await saveMediaToDB(index, file);
     }
+    
+    const sound = new Audio('./sounds/se.mp3');
+
+    // 2. 鳴らしたいタイミングで実行
+    function playSE() {
+        sound.currentTime = 0; // 頭出し（連続再生用）
+        sound.play().catch(err => console.log("再生失敗:", err));
+    }
 
     // ★修正：トグルONの瞬間に音声プリロード＆アンロックとスリープ防止を実行
     async function toggleAlarm(index, isChecked) {
