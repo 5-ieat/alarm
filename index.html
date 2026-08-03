@@ -367,7 +367,7 @@
                 </label>
             </div>
             <div class="input-group">
-                <input type="date" id="date-${index}" value="${alarm.date}" onchange="updateAlarm(${index}, 'date', this.value)">
+                <input type="date" id="date-${index}" value="${alarm.date || getTodayString()}" onchange="updateAlarm(${index}, 'date', this.value)">
                 <input type="time" id="time-${index}" value="${alarm.time}" onchange="updateAlarm(${index}, 'time', this.value)">
                 <input type="number" id="sec-${index}" class="sec-input" min="0" max="59" value="${alarm.sec}" onchange="updateAlarm(${index}, 'sec', this.value)">
                 <span>秒</span>
