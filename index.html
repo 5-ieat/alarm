@@ -596,9 +596,9 @@
     // ★修正：メインのアラームチェック判定ループ
     setInterval(async () => {
         const now = new Date();
-        const yyyy = now.getFullYear();
-        const mm = String(now.getMonth() + 1).padStart(2, '0');
-        const dd = String(now.getDate()).padStart(2, '0');
+        const 年 = now.getFullYear();
+        const 月 = String(now.getMonth() + 1).padStart(2, '0');
+        const 日 = String(now.getDate()).padStart(2, '0');
         const weekdays = [' (日) ', ' (月) ', ' (火) ', ' (水) ', ' (木) ', ' (金) ', ' (土) '];
         const dayIndex = now.getDay();
         const cw = weekdays[dayIndex];
@@ -606,10 +606,10 @@
         const min = String(now.getMinutes()).padStart(2, '0');
         const ss = String(now.getSeconds()).padStart(2, '0');
 
-        const currentDateStr = `${yyyy}-${mm}-${dd}`;
+        const currentDateStr = `${年}-${月}-${日}`;
         const currentTimeStr = `${hh}:${min}:${ss}`;
 
-        document.getElementById('clock').innerText = `${yyyy}/${mm}/${dd}${cw}${hh}:${min}:${ss}`;
+        document.getElementById('clock').innerText = `${年}/${月}/${日}${cw}${hh}:${min}:${ss}`;
 
         for (let index = 0; index < alarms.length; index++) {
             const alarm = alarms[index];
