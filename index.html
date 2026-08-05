@@ -557,6 +557,7 @@
 
         // タイマー用音源のアンロック処理
         try {
+            delete loadedAudios['timer'];
             const fileBlob = await getMediaFromDB('timer');
             if (fileBlob) {
                 const mediaUrl = URL.createObjectURL(fileBlob);
