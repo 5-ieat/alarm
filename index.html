@@ -525,6 +525,7 @@
         timerAudioName = file.name;
         document.getElementById('timer-filename').innerText = file.name;
         localStorage.setItem('pwa_timer_audio_name', file.name);
+        delete loadedAudios['timer'];
         await saveMediaToDB('timer', file);
     }
 
