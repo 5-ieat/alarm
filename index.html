@@ -423,40 +423,8 @@
 
     // 2. 鳴らしたいタイミングで実行
     function playSE() {
-        try {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            
-            // 1回目の「ピッ」
-            const osc1 = audioCtx.createOscillator();
-            const gain1 = audioCtx.createGain();
-            osc1.type = 'sine';
-            osc1.frequency.setValueAtTime(880, audioCtx.currentTime); // 高めの音 (A5)
-            osc1.connect(gain1);
-            gain1.connect(audioCtx.destination);
-            
-            osc1.start();
-            gain1.gain.setValueAtTime(0.5, audioCtx.currentTime);
-            gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-            osc1.stop(audioCtx.currentTime + 0.15);
-
-            // 少し間を空けて2回目を鳴らす（効果音ラボの決定音っぽい「ピピッ」感）
-            setTimeout(() => {
-                const osc2 = audioCtx.createOscillator();
-                const gain2 = audioCtx.createGain();
-                osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(880, audioCtx.currentTime);
-                osc2.connect(gain2);
-                gain2.connect(audioCtx.destination);
-                
-                osc2.start();
-                gain2.gain.setValueAtTime(0.5, audioCtx.currentTime);
-                gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-                osc2.stop(audioCtx.currentTime + 0.15);
-            }, 200);
-
-        } catch (err) {
-            console.log("Web Audio APIの再生に失敗:", err);
-        }
+        sound.currentTime = 0; // 頭出し（連続再生用）
+        sound.play().catch(err => console.log("再生失敗:", err));
     }
 
     // ★修正：トグルONの瞬間に音声プリロード＆アンロックとスリープ防止を実行
