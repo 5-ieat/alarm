@@ -326,19 +326,6 @@
         });
     }
 
-    // --- 環境表示・初期化 ---
-
-    window.addEventListener('DOMContentLoaded', displayEnvironment);
-
-    if (Notification.permission !== 'granted') {
-        Notification.requestPermission();
-    }
-
-    if (localStorage.getItem('pwa_alarms')) {
-        const saved = JSON.parse(localStorage.getItem('pwa_alarms'));
-        alarms = alarms.map((alarm, i) => saved[i] ? { ...alarm, ...saved[i], active: false } : alarm);
-    }
-
     // --- DOM生成 ---
     const alarmListContainer = document.getElementById('alarm-list');
     alarms.forEach((alarm, index) => {
