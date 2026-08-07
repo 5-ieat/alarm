@@ -420,60 +420,6 @@
     }
     
     const sound = new Audio('./sounds/se.mp3');
-async function toggleTimer() {
-        const btn = document.getElementById('timer-btn');
-        const display = document.getElementById('timer-display');
-
-        if (timerIntervalId) {
-            clearInterval(timerIntervalId);
-            timerIntervalId = null;
-            timerEndTime = null;
-            btn.innerText = "スタート";
-            btn.style.background = "#f59e0b";
-            display.innerText = "";
-            delete loadedAudios['timer'];
-            return;
-        }
-
-        const min = parseInt(document.getElementById('timer-min').value, 10) || 0;
-        const sec = parseInt(document.getElementById('timer-sec').value, 10) || 0;
-        const totalMs = ((min * 60) + sec) * 1000;
-
-        if (totalMs <= 0) {
-            alert("時間を設定してください。");
-            return;
-        }
-
-        requestWakeLock();
-
-        // ★【重要】Safari対策：スタートボタンを押した直後の「ユーザー操作が有効な瞬間」に
-        // 先にダミーの無音オーディオ等でタップ権限を確実に取得・維持する
-        try {
-            delete loadedAudios['timer'];
-            const fileBlob = await getMediaFromDB('timer');
-            if (fileBlob) {
-                const mediaUrl = URL.createObjectURL(fileBlob);
-                const audio = new Audio(mediaUrl);
-                audio.loop = true;                 
-                
-                // すぐに再生・一時停止を「awaitなし」またはボタン押下直後に実行
-                audio.volume = 0;
-                await audio.play().catch(() => {});
-                audio.pause();
-                audio.currentTime = 0;              
-                audio.volume = 1.0;
-                
-                loadedAudios['timer'] = audio;
-            }
-        } catch (e) {
-            console.warn("タイマー音源の事前ロード失敗:", e);
-        }
-
-        timerEndTime = Date.now() + totalMs;
-        btn.innerText = "キャンセル";
-        btn.style.background = "#64748b";
-
-        timerIntervalId = setInterval(() => {
     // 2. 鳴らしたいタイミングで実行
     function playSE() {
         sound.currentTime = 0; // 頭出し（連続再生用）
@@ -585,13 +531,10 @@ async function toggleTimer() {
                 const audio = new Audio(mediaUrl);
                 audio.loop = true;                   
                 audio.volume = 0;
-                await audio.play();
+                await audio.play();.catch(() => {});
                 audio.pause();
                 audio.currentTime = 0;              
                 audio.volume = 1.0;
-                await audio.play();
-                audio.pause();
-                audio.currentTime = 0;
                 loadedAudios['timer'] = audio;
             }
         } catch (e) {
