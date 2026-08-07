@@ -531,7 +531,7 @@
                 const audio = new Audio(mediaUrl);
                 audio.loop = true;                   
                 audio.volume = 0;
-                await audio.play();.catch(() => {});
+                await audio.play().catch(() => {});
                 audio.pause();
                 audio.currentTime = 0;              
                 audio.volume = 1.0;
