@@ -172,7 +172,7 @@
         <div class="toggle-section">
             <span class="sp-only4">アラームをかける通知の時間</span>
             <label class="switch">
-                <input type="checkbox" id="toggle-custom" onchange="customAlarmActive = this.checked; saveCustomAlarmConfig();">
+                <input type="checkbox" id="toggle-custom" onchange="customAlarmActive = this.checked; saveCustomAlarmConfig(); handleCustomSilentLoop(this.checked);">
                 <span class="slider2"></span>
             </label>
         </div>
