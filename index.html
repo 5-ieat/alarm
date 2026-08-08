@@ -172,7 +172,7 @@
         <div class="toggle-section">
             <span class="sp-only4">アラームをかける通知の時間</span>
             <label class="switch">
-                <input type="checkbox" id="toggle-custom" onchange="customAlarmActive = this.checked; saveCustomAlarmConfig(); handleCustomSilentLoop(this.checked);">
+                <input type="checkbox" id="toggle-custom" onchange="customAlarmActive = this.checked; saveCustomAlarmConfig(); muon(this.checked);">
                 <span class="slider2"></span>
             </label>
         </div>
@@ -245,19 +245,52 @@
     let wakeLock = null;   // ★追加：画面スリープ防止用
     let customAlarmActive = false;
 
-    const customSilentAudio = new Audio('./sounds/muon.mp3');
-    customSilentAudio.loop = true;
+    let audioCtx = null;
+    let silentSource = null;
 
 // ▼ オン/オフ時に無音の再生・停止を切り替える関数
-    function handleCustomSilentLoop(isChecked) {
+    function muon(isChecked) {
         if (isChecked) {
-            customSilentAudio.currentTime = 0;
-            customSilentAudio.play().catch(err => {
-                console.log("無音の連続再生ブロック:", err);
-            });
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!audioCtx) {
+                    audioCtx = new AudioContext();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+            // 無音のバッファ（ごく短い無音データ）を作成してループ再生する
+                if (silentSource) {
+                    try { silentSource.stop(); } catch(e) {}
+                }
+            
+                const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 2, audioCtx.sampleRate);
+                silentSource = audioCtx.createBufferSource();
+                silentSource.buffer = buffer;
+                silentSource.loop = true;
+            
+            // 音量をゼロにして接続
+                const gainNode = audioCtx.createGain();
+                gainNode.gain.value = 0.0;
+            
+                silentSource.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+            
+                silentSource.start(0);
+                console.log("Web Audio APIによる無音ループ開始");
+            } catch (err) {
+                console.log("Web Audio APIの開始に失敗:", err);
+            }
         } else {
-            customSilentAudio.pause();
-            customSilentAudio.currentTime = 0;
+            if (silentSource) {
+                try {
+                    silentSource.stop();
+                    silentSource.disconnect();
+                } catch(e) {}
+                silentSource = null;
+                console.log("無音ループ停止");
+            }
         }
     }
 
