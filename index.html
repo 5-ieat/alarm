@@ -245,6 +245,22 @@
     let wakeLock = null;   // ★追加：画面スリープ防止用
     let customAlarmActive = false;
 
+    const customSilentAudio = new Audio('./sounds/muon.mp3');
+    customSilentAudio.loop = true;
+
+// ▼ オン/オフ時に無音の再生・停止を切り替える関数
+    function handleCustomSilentLoop(isChecked) {
+        if (isChecked) {
+            customSilentAudio.currentTime = 0;
+            customSilentAudio.play().catch(err => {
+                console.log("無音の連続再生ブロック:", err);
+            });
+        } else {
+            customSilentAudio.pause();
+            customSilentAudio.currentTime = 0;
+        }
+    }
+
     // アラームやタイマーが有効になったら画面消灯を防止
     async function requestWakeLock() {
         try {
